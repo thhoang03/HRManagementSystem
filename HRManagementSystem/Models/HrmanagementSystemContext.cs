@@ -53,11 +53,11 @@ public partial class HrmanagementSystemContext : DbContext
     {
         modelBuilder.Entity<Attendance>(entity =>
         {
-            entity.HasKey(e => e.AttendanceId).HasName("PK__Attendan__8B69263C92804809");
+            entity.HasKey(e => e.AttendanceId).HasName("PK__Attendan__8B69263CB96F3D53");
 
             entity.ToTable("Attendance");
 
-            entity.HasIndex(e => new { e.EmployeeId, e.AttendanceDate }, "UQ__Attendan__77AAB78FB29A1A98").IsUnique();
+            entity.HasIndex(e => new { e.EmployeeId, e.AttendanceDate }, "UQ__Attendan__77AAB78FCDF6323A").IsUnique();
 
             entity.Property(e => e.AttendanceId).HasColumnName("AttendanceID");
             entity.Property(e => e.AttendanceDate).HasDefaultValueSql("(CONVERT([date],getdate()))");
@@ -77,7 +77,7 @@ public partial class HrmanagementSystemContext : DbContext
 
         modelBuilder.Entity<Contract>(entity =>
         {
-            entity.HasKey(e => e.ContractId).HasName("PK__Contract__C90D34093F95FEDB");
+            entity.HasKey(e => e.ContractId).HasName("PK__Contract__C90D340971BBA850");
 
             entity.Property(e => e.ContractId).HasColumnName("ContractID");
             entity.Property(e => e.ContractSalary).HasColumnType("decimal(18, 2)");
@@ -94,18 +94,18 @@ public partial class HrmanagementSystemContext : DbContext
 
         modelBuilder.Entity<Department>(entity =>
         {
-            entity.HasKey(e => e.DepartmentId).HasName("PK__Departme__B2079BCD7F0A54CC");
+            entity.HasKey(e => e.DepartmentId).HasName("PK__Departme__B2079BCD792DEB18");
 
             entity.Property(e => e.DepartmentId).HasColumnName("DepartmentID");
             entity.Property(e => e.DepartmentName).HasMaxLength(100);
-            entity.Property(e => e.Location).HasMaxLength(255);
+            entity.Property(e => e.Description).HasMaxLength(255);
         });
 
         modelBuilder.Entity<Employee>(entity =>
         {
-            entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04FF13DA6E25A");
+            entity.HasKey(e => e.EmployeeId).HasName("PK__Employee__7AD04FF17A5EA222");
 
-            entity.HasIndex(e => e.Email, "UQ__Employee__A9D10534C69463EC").IsUnique();
+            entity.HasIndex(e => e.Email, "UQ__Employee__A9D10534ED4F3171").IsUnique();
 
             entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
             entity.Property(e => e.Address).HasMaxLength(255);
@@ -134,7 +134,7 @@ public partial class HrmanagementSystemContext : DbContext
 
         modelBuilder.Entity<LeaveRequest>(entity =>
         {
-            entity.HasKey(e => e.LeaveId).HasName("PK__LeaveReq__796DB9795FA44FE0");
+            entity.HasKey(e => e.LeaveId).HasName("PK__LeaveReq__796DB979B5B5E4E7");
 
             entity.Property(e => e.LeaveId).HasColumnName("LeaveID");
             entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
@@ -157,7 +157,7 @@ public partial class HrmanagementSystemContext : DbContext
 
         modelBuilder.Entity<Payroll>(entity =>
         {
-            entity.HasKey(e => e.PayrollId).HasName("PK__Payroll__99DFC6923EF0F065");
+            entity.HasKey(e => e.PayrollId).HasName("PK__Payroll__99DFC692699B367F");
 
             entity.ToTable("Payroll");
 
@@ -191,7 +191,7 @@ public partial class HrmanagementSystemContext : DbContext
 
         modelBuilder.Entity<Position>(entity =>
         {
-            entity.HasKey(e => e.PositionId).HasName("PK__Position__60BB9A59A50FB178");
+            entity.HasKey(e => e.PositionId).HasName("PK__Position__60BB9A596206C0CF");
 
             entity.Property(e => e.PositionId).HasColumnName("PositionID");
             entity.Property(e => e.BaseSalary).HasColumnType("decimal(18, 2)");
@@ -200,9 +200,9 @@ public partial class HrmanagementSystemContext : DbContext
 
         modelBuilder.Entity<Setting>(entity =>
         {
-            entity.HasKey(e => e.SettingId).HasName("PK__Settings__54372AFDF50A6A24");
+            entity.HasKey(e => e.SettingId).HasName("PK__Settings__54372AFD5E9C32A5");
 
-            entity.HasIndex(e => e.SettingKey, "UQ__Settings__01E719AD6E3A044B").IsUnique();
+            entity.HasIndex(e => e.SettingKey, "UQ__Settings__01E719ADC45C0EE4").IsUnique();
 
             entity.Property(e => e.SettingId).HasColumnName("SettingID");
             entity.Property(e => e.Description).HasMaxLength(255);
@@ -214,11 +214,11 @@ public partial class HrmanagementSystemContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCAC51BEAAA8");
+            entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCAC30191567");
 
-            entity.HasIndex(e => e.Username, "UQ__Users__536C85E4ABECBEE7").IsUnique();
+            entity.HasIndex(e => e.Username, "UQ__Users__536C85E404D41D19").IsUnique();
 
-            entity.HasIndex(e => e.EmployeeId, "UQ__Users__7AD04FF0E4A5B619").IsUnique();
+            entity.HasIndex(e => e.EmployeeId, "UQ__Users__7AD04FF0EA5D361D").IsUnique();
 
             entity.Property(e => e.UserId).HasColumnName("UserID");
             entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");

@@ -8,7 +8,7 @@ GO
 CREATE TABLE Departments (
     DepartmentID INT PRIMARY KEY IDENTITY(1,1),
     DepartmentName NVARCHAR(100) NOT NULL,
-    Location NVARCHAR(255)
+    Description NVARCHAR(255)
 );
 
 CREATE TABLE Positions (
