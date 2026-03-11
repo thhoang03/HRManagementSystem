@@ -1,12 +1,10 @@
-﻿<Page x:Name="frmDepartments"
-      x:Class="HRManagementSystem.Views.Admin.DepartmentsView"
+﻿<Page x:Name="frmPositions" x:Class="HRManagementSystem.Views.Admin.PositionsView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       mc:Ignorable="d"
-      Loaded="frmDepartments_Loaded"
-      Background="#F8FAFC">
+      Background="#F8FAFC" Loaded="frmPositions_Loaded">
 
     <Grid Margin="24">
 
@@ -16,42 +14,40 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+
         <!-- HEADER -->
 
-        <TextBlock Text="Departments Management"
+        <TextBlock Text="Position Management"
                    Grid.Row="0"
                    FontSize="24"
                    FontWeight="Bold"
-                   VerticalAlignment="Center"
-                   Foreground="#0F172A"/>
+                   Foreground="#0F172A"
+                   VerticalAlignment="Center"/>
 
         <StackPanel Grid.Row="1" Margin="0,16,0,16" Orientation="Horizontal">
 
             <Button x:Name="btnNew"
-                        Content="＋ New"
+                        Content="+ New"
                         Width="100"
                         Height="36"
                         Margin="0,0,8,0"
                         Background="#F9D678"
-                        FontWeight="SemiBold"
-                        Click="btnNew_Click"/>
+                        FontWeight="SemiBold" Click="btnNew_Click"/>
 
             <Button x:Name="btnDelete"
-                        Content="🗑 Delete"
+                        Content="Delete"
                         Width="100"
                         Height="36"
                         Margin="0,0,16,0"
                         Background="#EF4444"
-                        Foreground="White"
-                        Click="btnDelete_Click"/>
+                        Foreground="White" Click="btnDelete_Click"/>
 
             <TextBox x:Name="txtSearch"
                          Width="220"
                          Height="36"
                          Padding="8"
                          Margin="0,0,8,0"
-                         VerticalContentAlignment="Center"
-                         TextChanged="txtSearch_TextChanged"/>
+                         VerticalContentAlignment="Center" TextChanged="txtSearch_TextChanged"/>
 
             <Button Content="Search"
                         Width="90"
@@ -60,7 +56,6 @@
                         FontWeight="SemiBold"/>
 
         </StackPanel>
-
 
         <!-- CONTENT -->
 
@@ -71,7 +66,8 @@
                 <ColumnDefinition Width="1*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- DATA GRID CARD -->
+
+            <!-- POSITION LIST -->
 
             <Border Grid.Column="0"
                     Background="White"
@@ -83,27 +79,26 @@
                     <DropShadowEffect BlurRadius="12" Opacity="0.15"/>
                 </Border.Effect>
 
-                <DataGrid x:Name="dgDepartments"
+                <DataGrid x:Name="dgPositions"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
-                          RowHeight="34"
                           HeadersVisibility="Column"
                           GridLinesVisibility="None"
-                          SelectionChanged="dgDepartments_SelectionChanged">
+                          RowHeight="34" SelectionChanged="dgPositions_SelectionChanged">
 
                     <DataGrid.Columns>
 
                         <DataGridTextColumn Header="ID"
-                                            Binding="{Binding DepartmentId}"
-                                            Width="90"/>
+                                            Binding="{Binding PositionId}"
+                                            Width="1*"/>
 
-                        <DataGridTextColumn Header="Department Name"
-                                            Binding="{Binding DepartmentName}"
-                                            Width="*"/>
+                        <DataGridTextColumn Header="Position Name"
+                                            Binding="{Binding PositionName}"
+                                            Width="2*"/>
 
-                        <DataGridTextColumn Header="Description"
-                                            Binding="{Binding Description}"
-                                            Width="*"/>
+                        <DataGridTextColumn Header="Base Salary"
+                                            Binding="{Binding BaseSalary}"
+                                            Width="2*"/>
 
                     </DataGrid.Columns>
 
@@ -112,7 +107,7 @@
             </Border>
 
 
-            <!-- DETAIL FORM -->
+            <!-- POSITION DETAIL -->
 
             <Border Grid.Column="1"
                     Background="White"
@@ -125,30 +120,29 @@
 
                 <StackPanel>
 
-                    <TextBlock Text="Department Detail"
+                    <TextBlock Text="Position Detail"
                                FontSize="20"
                                FontWeight="Bold"
                                Margin="0,0,0,20"/>
 
-                    <!-- Name -->
 
-                    <TextBlock Text="Department Name"
-                               FontWeight="SemiBold"/>
+                    <!-- Position Name -->
 
-                    <TextBox x:Name="txtDeptName"
-                             Height="36"
+                    <TextBlock Text="Position Name"/>
+                    <TextBox x:Name="txtPositionName"
+                             Height="34"
                              Padding="8"
                              Margin="0,6,0,14"/>
 
-                    <!-- Description -->
 
-                    <TextBlock Text="Description"
-                               FontWeight="SemiBold"/>
+                    <!-- Base Salary -->
 
-                    <TextBox x:Name="txtDescription"
-                             Height="36"
+                    <TextBlock Text="Base Salary"/>
+                    <TextBox x:Name="txtBaseSalary"
+                             Height="34"
                              Padding="8"
                              Margin="0,6,0,20"/>
+
 
                     <!-- Buttons -->
 
@@ -161,16 +155,15 @@
                                 Height="36"
                                 Margin="0,0,8,0"
                                 Background="#F9D678"
-                                FontWeight="SemiBold"
-                                Click="btnAdd_Click"/>
+                                FontWeight="SemiBold" Click="btnAdd_Click"/>
 
                         <Button x:Name="btnUpdate"
                                 Content="Update"
                                 Width="100"
                                 Height="36"
                                 Background="#3B82F6"
-                                FontWeight="SemiBold"
-                                Click="btnUpdate_Click"/>
+                                Foreground="White"
+                                FontWeight="SemiBold" Click="btnUpdate_Click"/>
 
                     </StackPanel>
 
@@ -181,4 +174,5 @@
         </Grid>
 
     </Grid>
+
 </Page>

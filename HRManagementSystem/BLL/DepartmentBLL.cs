@@ -16,6 +16,18 @@ namespace HRManagementSystem.BLL
             _deptDAL = (DepartmentDAL)_baseDAL;
         }
      
+        public List<Department> Search(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return _deptDAL.GetAll().ToList();
+            }
+
+            return _deptDAL.GetAll()
+                           .Where(d => d.DepartmentName.Contains(name, StringComparison.OrdinalIgnoreCase)
+                                    || d.Description.Contains(name, StringComparison.OrdinalIgnoreCase))
+                           .ToList();
+        }
 
     }
 }

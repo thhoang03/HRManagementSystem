@@ -118,12 +118,16 @@
 
             <Button x:Name="btnPositions"
                     Content="Positions"
-                    Style="{StaticResource SidebarButtonStyle}"/>
+                    Style="{StaticResource SidebarButtonStyle}" Click="btnPositions_Click"/>
 
             <Button x:Name="btnEmployees"
                     Content="Employees"
                     Style="{StaticResource SidebarButtonStyle}"
                     Click="btnEmployees_Click"/>
+
+            <Button x:Name="btnContracts"
+                    Content="Contracts"
+                    Style="{StaticResource SidebarButtonStyle}" Click="btnContracts_Click"/>
 
             <Button x:Name="btnAttendance"
                     Content="Attendance"

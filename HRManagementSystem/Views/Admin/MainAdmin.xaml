@@ -9,7 +9,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="4*"/>
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
@@ -17,23 +17,6 @@
         </Grid>
 
         <Grid Grid.Column="1" Background="#F8FAFC">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <Border Grid.Row="0" 
-                    BorderBrush="#E2E8F0" 
-                    BorderThickness="0,0,0,1" 
-                    Background="White">
-                <DockPanel Margin="18,12">
-                    <TextBlock x:Name="tblPageTitle"
-                               VerticalAlignment="Center"
-                               FontSize="24"
-                               FontWeight="SemiBold" />
-                </DockPanel>
-            </Border>
-
             <Frame Grid.Row="1" x:Name="MainFrame" NavigationUIVisibility="Hidden"/>
         </Grid>
 
