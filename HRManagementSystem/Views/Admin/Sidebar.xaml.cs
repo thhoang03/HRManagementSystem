@@ -42,5 +42,23 @@ namespace HRManagementSystem.Views.Admin
                 mainAdmin.MainFrame.Navigate(new DepartmentsView());
             }
         }
+
+        private void btnPositions_Click(object sender, RoutedEventArgs e)
+        {
+            var mainAdmin = Window.GetWindow(this) as MainAdmin;
+            if (mainAdmin != null)
+            {
+                mainAdmin.MainFrame.Navigate(new PositionsView());
+            }
+        }
+
+        private void btnContracts_Click(object sender, RoutedEventArgs e)
+        {
+            var mainAdmin = Window.GetWindow(this) as MainAdmin;
+            if (mainAdmin != null)
+            {
+                mainAdmin.MainFrame.Navigate(new ContractsView());
+            }
+        }
     }
 }

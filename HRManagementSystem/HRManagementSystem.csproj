@@ -32,7 +32,6 @@
   <ItemGroup>
     <Folder Include="DAL\" />
     <Folder Include="BLL\" />
-    <Folder Include="Views\Admin\" />
   </ItemGroup>
 
 </Project>

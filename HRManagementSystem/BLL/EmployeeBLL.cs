@@ -16,5 +16,10 @@ namespace HRManagementSystem.BLL
         {
             _empDAL = (EmployeeDAL)_baseDAL;
         }
+
+        public List<Employee> Search(string name)
+        {
+            return _empDAL.GetAll().Where(e=>e.FullName.ToLower().Contains(name.ToLower())).ToList();
+        }
     }
 }

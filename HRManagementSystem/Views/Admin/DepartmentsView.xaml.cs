@@ -45,7 +45,7 @@ namespace HRManagementSystem.Views.Admin
             FillDataGridDepartments();
         }
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             string name = txtDeptName.Text.Trim();
             string des = txtDescription.Text.Trim();
@@ -60,6 +60,59 @@ namespace HRManagementSystem.Views.Admin
             Clear();
         }
 
-        
+        private void btnNew_Click(object sender, RoutedEventArgs e)
+        {
+            Clear();
+            txtDeptName.Focus();
+        }
+
+        private void dgDepartments_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var dept = dgDepartments.SelectedItem as Department;
+            if (dept != null)
+            {
+                txtDeptName.Text = dept.DepartmentName;
+                txtDescription.Text = dept.Description;
+            }
+        }
+
+        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        {
+            var dept = dgDepartments.SelectedItem as Department;
+            if (dept != null)
+            {
+                dept.DepartmentName = txtDeptName.Text.Trim();
+                dept.Description = txtDescription.Text.Trim();
+
+                _deptBLL.Update(dept);
+                FillDataGridDepartments();
+                Clear();
+            }
+        }
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            var dept = dgDepartments.SelectedItem as Department;
+            if (dept != null)
+            {
+                if (MessageBox.Show("Do you really want to delete this department?",
+                "Warning",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    _deptBLL.Delete(dept);
+                    FillDataGridDepartments();
+                    Clear();
+                }
+            }
+
+        }
+
+        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string name = txtSearch.Text.Trim();
+            dgDepartments.ItemsSource = null;
+            dgDepartments.ItemsSource = _deptBLL.Search(name);
+        }
     }
 }
