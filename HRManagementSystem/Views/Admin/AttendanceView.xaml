@@ -1,0 +1,312 @@
+<Page x:Name="frmAttendance"
+      x:Class="HRManagementSystem.Views.Admin.AttendanceView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d"
+      Loaded="frmAttendance_Loaded"
+      Background="#F8FAFC">
+
+    <Grid Margin="24">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+
+        <TextBlock Text="Attendance Management"
+                   Grid.Row="0"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="#0F172A"/>
+
+
+        <!-- ACTION BAR -->
+
+        <StackPanel Grid.Row="1" Margin="0,16,0,10" Orientation="Horizontal">
+
+            <Button Content="+ New"
+                    x:Name="btnNew"
+                    Width="100"
+                    Height="36"
+                    Margin="0,0,8,0"
+                    Background="#F9D678"
+                    BorderThickness="0"
+                    FontWeight="SemiBold"
+                    Click="btnNew_Click"/>
+
+            <Button Content="Delete"
+                    x:Name="btnDelete"
+                    Width="100"
+                    Height="36"
+                    Margin="0,0,16,0"
+                    Background="#EF4444"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Click="btnDelete_Click"/>
+
+            <TextBox x:Name="txtSearch"
+                     Width="220"
+                     Height="36"
+                     Padding="8"
+                     Margin="0,0,8,0"
+                     VerticalContentAlignment="Center"
+                     BorderBrush="#CBD5E1"
+                     BorderThickness="1"
+                     TextChanged="txtSearch_TextChanged"/>
+
+            <Button Content="Search"
+                    Width="90"
+                    Height="36"
+                    Background="#F9D678"
+                    BorderThickness="0"
+                    FontWeight="SemiBold"/>
+
+        </StackPanel>
+
+
+        <!-- FILTERS -->
+
+        <Border Grid.Row="2"
+                Background="White"
+                Padding="12"
+                CornerRadius="8"
+                Margin="0,0,0,16">
+
+            <StackPanel Orientation="Horizontal">
+
+                <TextBlock Text="Employee"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"
+                           Foreground="#475569"/>
+
+                <ComboBox x:Name="cbFilterEmployees"
+                          Width="220"
+                          Height="34"
+                          Margin="0,0,16,0"
+                          SelectionChanged="cbFilterEmployees_SelectionChanged"/>
+
+                <TextBlock Text="Date"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"
+                           Foreground="#475569"/>
+
+                <DatePicker x:Name="dpFilterDate"
+                            Width="150"
+                            Height="34"
+                            Margin="0,0,16,0"
+                            SelectedDateChanged="dpFilterDate_SelectedDateChanged"/>
+
+                <TextBlock Text="Month"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"
+                           Foreground="#475569"/>
+
+                <ComboBox x:Name="cbFilterMonth"
+                          Width="140"
+                          Height="34"
+                          Margin="0,0,16,0"
+                          SelectionChanged="cbFilterMonth_SelectionChanged"/>
+
+                <TextBlock Text="Year"
+                           VerticalAlignment="Center"
+                           Margin="0,0,8,0"
+                           Foreground="#475569"/>
+
+                <ComboBox x:Name="cbFilterYear"
+                          Width="110"
+                          Height="34"
+                          Margin="0,0,16,0"
+                          SelectionChanged="cbFilterYear_SelectionChanged"/>
+
+                <Button Content="Clear"
+                        Height="34"
+                        Padding="14,0"
+                        Background="#E2E8F0"
+                        BorderThickness="0"
+                        Foreground="#0F172A"
+                        Click="btnClearFilter_Click"/>
+
+            </StackPanel>
+
+        </Border>
+
+
+        <!-- CONTENT -->
+
+        <Grid Grid.Row="3">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ATTENDANCE LIST -->
+
+            <Border Grid.Column="0"
+                    Background="White"
+                    CornerRadius="12"
+                    Padding="16"
+                    Margin="0,0,16,0">
+
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
+                </Border.Effect>
+
+                <DataGrid x:Name="dgAttendance"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          RowHeight="36"
+                          GridLinesVisibility="None"
+                          HeadersVisibility="Column"
+                          SelectionChanged="dgAttendance_SelectionChanged"
+                          BorderThickness="0">
+
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Header="ID"
+                                            Binding="{Binding AttendanceId}"
+                                            Width="0.5*"/>
+
+                        <DataGridTextColumn Header="Employee"
+                                            Binding="{Binding Employee.FullName}"
+                                            Width="1.5*"/>
+
+                        <DataGridTextColumn Header="Date"
+                                            Binding="{Binding AttendanceDate}"
+                                            Width="*"/>
+
+                        <DataGridTextColumn Header="Check In"
+                                            Binding="{Binding CheckIn,StringFormat=g}"
+                                            Width="1*"/>
+
+                        <DataGridTextColumn Header="Check Out"
+                                            Binding="{Binding CheckOut,StringFormat=g}"
+                                            Width="1*"/>
+
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding Status}"
+                                            Width="0.5*"/>
+
+                        <DataGridTextColumn Header="Device IP"
+                                            Binding="{Binding DeviceIp}"
+                                            Width="1*"/>
+
+                    </DataGrid.Columns>
+
+                </DataGrid>
+
+            </Border>
+
+
+            <!-- DETAIL FORM -->
+
+            <Border Grid.Column="1"
+                    Background="White"
+                    CornerRadius="12"
+                    Padding="20">
+
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
+                </Border.Effect>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+                    <StackPanel>
+
+                        <TextBlock Text="Attendance Detail"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,20"/>
+
+
+                        <TextBlock Text="Employee"/>
+                        <ComboBox x:Name="cbEmployees"
+                                  Margin="0,6,0,12"
+                                  Height="34"/>
+
+
+                        <TextBlock Text="Attendance Date"/>
+                        <DatePicker x:Name="dpAttendanceDate"
+                                    Margin="0,6,0,12"
+                                    Height="34"/>
+
+
+                        <TextBlock Text="Check In"/>
+                        <TextBox x:Name="txtCheckIn"
+                                 Height="34"
+                                 Margin="0,6,0,12"
+                                 Padding="8"
+                                 BorderBrush="#CBD5E1"/>
+
+
+                        <TextBlock Text="Check Out"/>
+                        <TextBox x:Name="txtCheckOut"
+                                 Height="34"
+                                 Margin="0,6,0,12"
+                                 Padding="8"
+                                 BorderBrush="#CBD5E1"/>
+
+
+                        <TextBlock Text="Status"/>
+                        <ComboBox x:Name="cbStatus"
+                                  Margin="0,6,0,12"
+                                  Height="34">
+                            <ComboBoxItem Content="Present"/>
+                            <ComboBoxItem Content="Absent"/>
+                            <ComboBoxItem Content="Late"/>
+                            <ComboBoxItem Content="Leave"/>
+                        </ComboBox>
+
+
+                        <TextBlock Text="Device IP"/>
+                        <TextBox x:Name="txtDeviceIp"
+                                 Height="34"
+                                 Margin="0,6,0,20"
+                                 Padding="8"
+                                 BorderBrush="#CBD5E1"/>
+
+
+                        <!-- ACTION BUTTONS -->
+
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right">
+
+                            <Button Content="Add"
+                                    x:Name="btnAdd"
+                                    Width="100"
+                                    Height="36"
+                                    Margin="0,0,8,0"
+                                    Background="#22C55E"
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    FontWeight="SemiBold"
+                                    Click="btnAdd_Click"/>
+
+                            <Button Content="Update"
+                                    x:Name="btnUpdate"
+                                    Width="100"
+                                    Height="36"
+                                    Background="#F9D678"
+                                    BorderThickness="0"
+                                    FontWeight="SemiBold"
+                                    Click="btnUpdate_Click"/>
+
+                        </StackPanel>
+
+                    </StackPanel>
+
+                </ScrollViewer>
+
+            </Border>
+
+        </Grid>
+
+    </Grid>
+
+</Page>

@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:HRManagementSystem.Views.Admin"
         mc:Ignorable="d"
-        Title="MainAdmin" Height="700" Width="1300" WindowStartupLocation="CenterScreen">
+        Title="MainAdmin" Height="700" Width="1300" WindowStartupLocation="CenterScreen" WindowState="Maximized"
+        Loaded="MainAdmin_Loaded">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>

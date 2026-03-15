@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace HRManagementSystem.DAL
 {
-    public class UserDAL: BaseDAL<User>
+    public class AttendanceDAL : BaseDAL<Attendance>
     {
-        public override List<User> GetAll()
+        public override List<Attendance> GetAll()
         {
             using (var context = new HrmanagementSystemContext())
             {
-                return context.Users
-                              .Include(u => u.Employee)
+                return context.Attendances
+                              .Include(a => a.Employee)
                               .ToList();
             }
         }

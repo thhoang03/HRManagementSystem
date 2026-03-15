@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,23 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace HRManagementSystem.Views.Admin
 {
     /// <summary>
-    /// Interaction logic for MainAdmin.xaml
+    /// Interaction logic for WelcomeView.xaml
     /// </summary>
-    public partial class MainAdmin : Window
+    public partial class WelcomeView : Page
     {
-        public MainAdmin()
+        public WelcomeView()
         {
             InitializeComponent();
-        }
-
-        private void MainAdmin_Loaded(object sender, RoutedEventArgs e)
-        {
-            MainFrame.Navigate(new WelcomeView());
         }
     }
 }

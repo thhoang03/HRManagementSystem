@@ -1,4 +1,6 @@
-﻿using HRManagementSystem.Views.Admin;
+using HRManagementSystem.BLL;
+using HRManagementSystem.Models;
+using HRManagementSystem.Views.Admin;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,6 +22,8 @@ namespace HRManagementSystem
     /// </summary>
     public partial class LoginWindow : Window
     {
+        private readonly UserBLL _userBLL = new();
+
         public LoginWindow()
         {
             InitializeComponent();
@@ -27,15 +31,32 @@ namespace HRManagementSystem
 
         private void btnLogin_Click(object sender, RoutedEventArgs e)
         {
-            if (txtUsername.Text == "admin" && txtPassword.Password == "123")
+            string username = txtUsername.Text.Trim();
+            string password = txtPassword.Password.Trim();
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
+                MessageBox.Show("Vui lòng nhập tên đăng nhập và mật khẩu!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            User? user = _userBLL.Authenticate(username, password);
+            if (user != null)
+            {
+                user.LastLogin = DateTime.Now;
+                _userBLL.Update(user);
+
+                Application.Current.Properties["CurrentUser"] = user;
+
                 MainAdmin mainAdmin = new MainAdmin();
                 mainAdmin.Show();
-                this.Close(); 
+                this.Close();
             }
             else
             {
-                MessageBox.Show("Sai tài khoản hoặc mật khẩu!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("Sai tên đăng nhập hoặc mật khẩu!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                txtPassword.Password = string.Empty;
+                txtPassword.Focus();
             }
         }
     }

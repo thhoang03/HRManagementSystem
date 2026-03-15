@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HRManagementSystem.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,13 @@ namespace HRManagementSystem.Views.Admin
         public Sidebar()
         {
             InitializeComponent();
+            if (Application.Current.Properties.Contains("CurrentUser"))
+        {
+            var user = Application.Current.Properties["CurrentUser"] as User;
+            txtUserName.Text =  user.Username;
+            txtUserRole.Text =  user.Role;
+
+        }
         }
 
         private void btnEmployees_Click(object sender, RoutedEventArgs e)
@@ -58,6 +66,33 @@ namespace HRManagementSystem.Views.Admin
             if (mainAdmin != null)
             {
                 mainAdmin.MainFrame.Navigate(new ContractsView());
+            }
+        }
+
+        private void btnUser_Click(object sender, RoutedEventArgs e)
+        {
+            var mainAdmin = Window.GetWindow(this) as MainAdmin;
+            if (mainAdmin != null)
+            {
+                mainAdmin.MainFrame.Navigate(new UsersView());
+            }
+        }
+
+        private void btnDashboard_Click(object sender, RoutedEventArgs e)
+        {
+            var mainAdmin = Window.GetWindow(this) as MainAdmin;
+            if (mainAdmin != null)
+            {
+                mainAdmin.MainFrame.Navigate(new DashboardView());
+            }
+        }
+
+        private void btnAttendance_Click(object sender, RoutedEventArgs e)
+        {
+            var mainAdmin = Window.GetWindow(this) as MainAdmin;
+            if (mainAdmin != null)
+            {
+                mainAdmin.MainFrame.Navigate(new AttendanceView());
             }
         }
     }
