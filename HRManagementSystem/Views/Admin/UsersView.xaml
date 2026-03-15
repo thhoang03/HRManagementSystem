@@ -1,0 +1,215 @@
+<Page x:Name="frmUsers"
+      x:Class="HRManagementSystem.Views.Admin.UsersView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d"
+      Loaded="frmUsers_Loaded"
+      Background="#F8FAFC">
+
+    <Grid Margin="24">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- HEADER -->
+
+        <TextBlock Text="Users Management"
+                   Grid.Row="0"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   VerticalAlignment="Center"
+                   Foreground="#0F172A"/>
+
+        <StackPanel Grid.Row="1" Margin="0,16,0,16" Orientation="Horizontal">
+
+            <Button Content="+ New"
+                    x:Name="btnNew"
+                    Width="100"
+                    Height="36"
+                    Margin="0,0,8,0"
+                    Background="#F9D678"
+                    FontWeight="SemiBold"
+                    Click="btnNew_Click"/>
+
+            <Button Content="Delete"
+                    x:Name="btnDelete"
+                    Width="100"
+                    Height="36"
+                    Margin="0,0,16,0"
+                    Background="#EF4444"
+                    Foreground="White"
+                    Click="btnDelete_Click"/>
+
+            <TextBox x:Name="txtSearch"
+                     Width="220"
+                     Height="36"
+                     Padding="8"
+                     Margin="0,0,8,0"
+                     VerticalContentAlignment="Center"
+                     TextChanged="txtSearch_TextChanged"/>
+
+            <Button Content="Search"
+                    Width="90"
+                    Height="36"
+                    Background="#F9D678"
+                    FontWeight="SemiBold"/>
+
+        </StackPanel>
+
+        <!-- CONTENT -->
+
+        <Grid Grid.Row="2">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- USERS LIST -->
+
+            <Border Grid.Column="0"
+                    Background="White"
+                    CornerRadius="12"
+                    Padding="16"
+                    Margin="0,0,16,0">
+
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" Opacity="0.15"/>
+                </Border.Effect>
+
+                <DataGrid x:Name="dgUsers"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          RowHeight="34"
+                          GridLinesVisibility="None"
+                          HeadersVisibility="Column"
+                          SelectionChanged="dgUsers_SelectionChanged">
+
+                    <DataGrid.Columns>
+
+                        <DataGridTextColumn Header="ID"
+                                            Binding="{Binding UserId}"
+                                            Width="80"/>
+
+                        <DataGridTextColumn Header="Username"
+                                            Binding="{Binding Username}"
+                                            Width="2*"/>
+
+                        <DataGridTextColumn Header="Role"
+                                            Binding="{Binding Role}"
+                                            Width="*"/>
+
+                        <DataGridTextColumn Header="Employee"
+                                            Binding="{Binding Employee.FullName}"
+                                            Width="2*"/>
+
+                        <DataGridTextColumn Header="Last Login"
+                                            Binding="{Binding LastLogin, StringFormat=g}"
+                                            Width="2*"/>
+
+                    </DataGrid.Columns>
+
+                </DataGrid>
+
+            </Border>
+
+            <!-- USER DETAIL -->
+
+            <Border Grid.Column="1"
+                    Background="White"
+                    CornerRadius="12"
+                    Padding="20">
+
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" Opacity="0.15"/>
+                </Border.Effect>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+
+                    <StackPanel>
+
+                        <TextBlock Text="User Detail"
+                                   FontSize="20"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,20"/>
+
+                        <!-- EMPLOYEE -->
+
+                        <TextBlock Text="Employee"/>
+                        <ComboBox x:Name="cbEmployees"
+                                  Margin="0,6,0,12"/>
+
+                        <!-- USERNAME -->
+
+                        <TextBlock Text="Username"/>
+                        <TextBox x:Name="txtUsername"
+                                 Height="34"
+                                 Margin="0,6,0,12"
+                                 Padding="8"/>
+
+                        <!-- PASSWORD -->
+
+                        <TextBlock Text="Password"/>
+                        <PasswordBox x:Name="pwdPassword"
+                                     Height="34"
+                                     Margin="0,6,0,12"
+                                     Padding="8"/>
+
+                        <!-- ROLE -->
+
+                        <TextBlock Text="Role"/>
+                        <TextBox x:Name="txtRole"
+                                 Height="34"
+                                 Margin="0,6,0,12"
+                                 Padding="8"/>
+
+                        <!-- LAST LOGIN -->
+
+                        <TextBlock Text="Last Login"/>
+                        <TextBox x:Name="txtLastLogin"
+                                 Height="34"
+                                 Margin="0,6,0,20"
+                                 Padding="8"
+                                 IsReadOnly="True"/>
+
+                        <!-- ACTION BUTTONS -->
+
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Right">
+
+                            <Button Content="Add"
+                                    x:Name="btnAdd"
+                                    Width="100"
+                                    Height="36"
+                                    Margin="0,0,8,0"
+                                    Background="#F9D678"
+                                    FontWeight="SemiBold"
+                                    Click="btnAdd_Click"/>
+
+                            <Button Content="Update"
+                                    x:Name="btnUpdate"
+                                    Width="100"
+                                    Height="36"
+                                    Background="#3B82F6"
+                                    Foreground="White"
+                                    FontWeight="SemiBold"
+                                    Click="btnUpdate_Click"/>
+
+                        </StackPanel>
+
+                    </StackPanel>
+
+                </ScrollViewer>
+
+            </Border>
+
+        </Grid>
+
+    </Grid>
+
+</Page>
