@@ -39,13 +39,22 @@
                     Click="btnNew_Click"/>
 
             <Button x:Name="btnDelete"
-                    Content="🗑 Delete"
+                    Content="Deactive"
                     Width="100"
                     Height="36"
-                    Margin="0,0,16,0"
+                    Margin="0,0,8,0"
                     Background="#EF4444"
                     Foreground="White"
                     Click="btnDelete_Click"/>
+
+            <Button x:Name="btnActive"
+                    Content="Active"
+                    Width="100"
+                    Height="36"
+                    Margin="0,0,16,0"
+                    Background="#22C55E"
+                    Foreground="White"
+                    Click="btnActive_Click"/>
 
             <TextBox x:Name="txtSearch"
                      Width="220"

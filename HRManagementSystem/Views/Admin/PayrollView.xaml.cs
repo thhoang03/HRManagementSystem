@@ -1,7 +1,8 @@
-﻿using HRManagementSystem.BLL;
+using HRManagementSystem.BLL;
 using HRManagementSystem.Models;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,8 +15,9 @@ namespace HRManagementSystem.Views.Admin
     public partial class PayrollView : Page
     {
         private readonly PayrollBLL _payBLL = new();
-        private readonly EmployeeBLL _empBLL = new();
-        private readonly ContractBLL _contBLL = new();
+        private readonly List<PayrollPreview> _generatedRows = new();
+        private List<PayrollPreview> _currentRows = new();
+        private bool _showingGenerated;
 
         public PayrollView()
         {
@@ -24,359 +26,247 @@ namespace HRManagementSystem.Views.Admin
 
         private void frmPayroll_Loaded(object sender, RoutedEventArgs e)
         {
-            FillComboEmployees();
-            FillComboContracts();
-            FillFilterEmployees();
-            FillMonthCombos();
-            FillYearCombos();
-            FillDataGridPayroll();
-            dpCreatedAt.SelectedDate = DateTime.Now;
+            FillMonthCombo();
+            FillYearCombo();
+
+            cbGenMonth.SelectedValue = DateTime.Now.Month;
+            cbGenYear.SelectedValue = DateTime.Now.Year;
+
+            LoadPayrollsFromDb(DateTime.Now.Month, DateTime.Now.Year);
         }
 
-        private void FillDataGridPayroll()
-        {
-            dgPayroll.ItemsSource = null;
-            dgPayroll.ItemsSource = _payBLL.GetAll();
-        }
-
-        private void FillComboEmployees()
-        {
-            cbEmployees.ItemsSource = null;
-            cbEmployees.ItemsSource = _empBLL.GetAll();
-            cbEmployees.SelectedValuePath = "EmployeeId";
-            cbEmployees.DisplayMemberPath = "FullName";
-        }
-
-        private void FillFilterEmployees()
-        {
-            cbFilterEmployees.ItemsSource = null;
-            cbFilterEmployees.ItemsSource = _empBLL.GetAll();
-            cbFilterEmployees.SelectedValuePath = "EmployeeId";
-            cbFilterEmployees.DisplayMemberPath = "FullName";
-        }
-
-        private void FillComboContracts(int? employeeId = null)
-        {
-            var contracts = _contBLL.GetAll();
-
-            if (employeeId.HasValue)
-            {
-                contracts = contracts.Where(c => c.EmployeeId == employeeId.Value).ToList();
-            }
-
-            cbContracts.ItemsSource = null;
-            cbContracts.ItemsSource = contracts;
-            cbContracts.SelectedValuePath = "ContractId";
-            cbContracts.DisplayMemberPath = "ContractType";
-        }
-
-        private void FillMonthCombos()
+        private void FillMonthCombo()
         {
             var months = Enumerable.Range(1, 12)
-                .Select(m => new MonthItem(m, new DateTime(2000, m, 1).ToString("MMMM")))
+                .Select(m => new MonthItem(m, new DateTime(2000, m, 1).ToString("MMMM", CultureInfo.InvariantCulture)))
                 .ToList();
 
-            cbMonth.ItemsSource = null;
-            cbMonth.ItemsSource = months;
-            cbMonth.DisplayMemberPath = "Name";
-            cbMonth.SelectedValuePath = "Value";
-
-            cbFilterMonth.ItemsSource = null;
-            cbFilterMonth.ItemsSource = months;
-            cbFilterMonth.DisplayMemberPath = "Name";
-            cbFilterMonth.SelectedValuePath = "Value";
+            cbGenMonth.ItemsSource = null;
+            cbGenMonth.ItemsSource = months;
+            cbGenMonth.DisplayMemberPath = "Name";
+            cbGenMonth.SelectedValuePath = "Value";
         }
 
-        private void FillYearCombos()
+        private void FillYearCombo()
         {
-            var years = _payBLL.GetAll()
-                .Where(p => p.Year.HasValue)
-                .Select(p => p.Year!.Value)
-                .Distinct()
-                .OrderByDescending(y => y)
-                .ToList();
+            int currentYear = DateTime.Now.Year;
+            var years = Enumerable.Range(currentYear - 2, 5).ToList();
 
-            if (years.Count == 0)
-            {
-                years.Add(DateTime.Now.Year);
-            }
-            else if (!years.Contains(DateTime.Now.Year))
-            {
-                years.Insert(0, DateTime.Now.Year);
-            }
-
-            cbYear.ItemsSource = null;
-            cbYear.ItemsSource = years;
-
-            cbFilterYear.ItemsSource = null;
-            cbFilterYear.ItemsSource = years;
+            cbGenYear.ItemsSource = null;
+            cbGenYear.ItemsSource = years;
         }
 
-        private void ApplyFilters()
+        private void LoadPayrollsFromDb(int month, int year)
         {
-            IEnumerable<Payroll> data = _payBLL.GetAll();
+            _currentRows = _payBLL.GetPayrollPreviews(month, year);
+            _showingGenerated = false;
+            txtMode.Text = _currentRows.Count == 0 ? "No payrolls found" : "Saved payrolls";
+            ApplySearch();
+        }
 
+        private void ShowGenerated(List<PayrollPreview> rows)
+        {
+            _generatedRows.Clear();
+            _generatedRows.AddRange(rows);
+            _currentRows = _generatedRows.ToList();
+            _showingGenerated = true;
+            txtMode.Text = "Preview (not saved)";
+            ApplySearch();
+        }
+
+        private void ApplySearch()
+        {
             string keyword = txtSearch.Text.Trim();
+            IEnumerable<PayrollPreview> data = _currentRows;
+
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                data = data.Where(p =>
-                    (p.Employee != null && p.Employee.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase))
-                    || (!string.IsNullOrEmpty(p.Status) && p.Status.Contains(keyword, StringComparison.OrdinalIgnoreCase))
-                    || (p.Contract != null && !string.IsNullOrEmpty(p.Contract.ContractType)
-                        && p.Contract.ContractType.Contains(keyword, StringComparison.OrdinalIgnoreCase)));
-            }
-
-            if (cbFilterEmployees.SelectedValue != null
-                && int.TryParse(cbFilterEmployees.SelectedValue.ToString(), out int empId))
-            {
-                data = data.Where(p => p.EmployeeId == empId);
-            }
-
-            if (cbFilterMonth.SelectedValue != null
-                && int.TryParse(cbFilterMonth.SelectedValue.ToString(), out int month))
-            {
-                data = data.Where(p => p.Month == month);
-            }
-
-            if (cbFilterYear.SelectedValue != null
-                && int.TryParse(cbFilterYear.SelectedValue.ToString(), out int year))
-            {
-                data = data.Where(p => p.Year == year);
-            }
-
-            string status = cbFilterStatus.Text?.Trim();
-            if (!string.IsNullOrWhiteSpace(status))
-            {
-                data = data.Where(p => !string.IsNullOrEmpty(p.Status)
-                                    && p.Status!.Equals(status, StringComparison.OrdinalIgnoreCase));
+                data = data.Where(p => p.EmployeeName.Contains(keyword, StringComparison.OrdinalIgnoreCase));
             }
 
             dgPayroll.ItemsSource = null;
             dgPayroll.ItemsSource = data.ToList();
         }
 
-        private void Clear()
+        private void btnGenerate_Click(object sender, RoutedEventArgs e)
         {
-            cbEmployees.SelectedValue = null;
-            cbContracts.SelectedValue = null;
-            cbMonth.SelectedValue = null;
-            cbYear.SelectedValue = null;
-            txtBaseSalary.Text = string.Empty;
-            txtOvertimePay.Text = string.Empty;
-            txtDeduction.Text = string.Empty;
-            txtBonus.Text = string.Empty;
-            txtNetSalary.Text = string.Empty;
-            cbStatus.SelectedIndex = -1;
-            dpCreatedAt.SelectedDate = DateTime.Now;
-        }
-
-        private void btnNew_Click(object sender, RoutedEventArgs e)
-        {
-            Clear();
-            cbEmployees.Focus();
-        }
-
-        private void cbEmployees_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (cbEmployees.SelectedValue != null
-                && int.TryParse(cbEmployees.SelectedValue.ToString(), out int empId))
+            if (!TryGetSelectedMonthYear(out int month, out int year))
             {
-                FillComboContracts(empId);
-            }
-            else
-            {
-                FillComboContracts();
-            }
-        }
-
-        private void dgPayroll_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            var payroll = dgPayroll.SelectedItem as Payroll;
-            if (payroll != null)
-            {
-                cbEmployees.SelectedValue = payroll.EmployeeId;
-                FillComboContracts(payroll.EmployeeId);
-                cbContracts.SelectedValue = payroll.ContractId;
-                cbMonth.SelectedValue = payroll.Month;
-                cbYear.SelectedValue = payroll.Year;
-                txtBaseSalary.Text = payroll.BaseSalary?.ToString() ?? string.Empty;
-                txtOvertimePay.Text = payroll.OvertimePay?.ToString() ?? string.Empty;
-                txtDeduction.Text = payroll.Deduction?.ToString() ?? string.Empty;
-                txtBonus.Text = payroll.Bonus?.ToString() ?? string.Empty;
-                txtNetSalary.Text = payroll.NetSalary?.ToString() ?? string.Empty;
-                cbStatus.Text = payroll.Status ?? string.Empty;
-                dpCreatedAt.SelectedDate = payroll.CreatedAt;
-            }
-        }
-
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
-        {
-            if (cbEmployees.SelectedValue == null || cbMonth.SelectedValue == null || cbYear.SelectedValue == null)
-            {
+                MessageBox.Show("Please select month and year.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            int.TryParse(cbEmployees.SelectedValue.ToString(), out int empId);
-            int? contractId = null;
-            if (cbContracts.SelectedValue != null && int.TryParse(cbContracts.SelectedValue.ToString(), out int contId))
+            if (_payBLL.HasPayrolls(month, year))
             {
-                contractId = contId;
+                MessageBox.Show("Payroll for this month already exists. Loading saved payrolls.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                LoadPayrollsFromDb(month, year);
+                ClearDetail();
+                return;
             }
 
-            int.TryParse(cbMonth.SelectedValue.ToString(), out int month);
-            int.TryParse(cbYear.SelectedValue.ToString(), out int year);
-
-            decimal? baseSalary = ParseDecimal(txtBaseSalary.Text);
-            decimal? overtime = ParseDecimal(txtOvertimePay.Text);
-            decimal? deduction = ParseDecimal(txtDeduction.Text);
-            decimal? bonus = ParseDecimal(txtBonus.Text);
-
-            decimal netSalary = CalculateNetSalary(baseSalary, overtime, bonus, deduction);
-
-            Payroll payroll = new();
-            payroll.EmployeeId = empId;
-            payroll.ContractId = contractId;
-            payroll.Month = month;
-            payroll.Year = year;
-            payroll.BaseSalary = baseSalary;
-            payroll.OvertimePay = overtime;
-            payroll.Deduction = deduction;
-            payroll.Bonus = bonus;
-            payroll.NetSalary = netSalary;
-            payroll.Status = cbStatus.Text?.Trim();
-            payroll.CreatedAt = dpCreatedAt.SelectedDate ?? DateTime.Now;
-
-            _payBLL.Add(payroll);
-            FillDataGridPayroll();
-            Clear();
+            var previews = _payBLL.GeneratePreview(month, year);
+            ShowGenerated(previews);
+            ClearDetail();
         }
 
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        private void btnSavePayroll_Click(object sender, RoutedEventArgs e)
         {
-            var payroll = dgPayroll.SelectedItem as Payroll;
-            if (payroll != null)
+            if (!_showingGenerated || _generatedRows.Count == 0)
             {
-                if (cbEmployees.SelectedValue == null || cbMonth.SelectedValue == null || cbYear.SelectedValue == null)
-                {
-                    return;
-                }
-
-                int.TryParse(cbEmployees.SelectedValue.ToString(), out int empId);
-                int? contractId = null;
-                if (cbContracts.SelectedValue != null && int.TryParse(cbContracts.SelectedValue.ToString(), out int contId))
-                {
-                    contractId = contId;
-                }
-
-                int.TryParse(cbMonth.SelectedValue.ToString(), out int month);
-                int.TryParse(cbYear.SelectedValue.ToString(), out int year);
-
-                decimal? baseSalary = ParseDecimal(txtBaseSalary.Text);
-                decimal? overtime = ParseDecimal(txtOvertimePay.Text);
-                decimal? deduction = ParseDecimal(txtDeduction.Text);
-                decimal? bonus = ParseDecimal(txtBonus.Text);
-
-                decimal netSalary = CalculateNetSalary(baseSalary, overtime, bonus, deduction);
-
-                payroll.EmployeeId = empId;
-                payroll.ContractId = contractId;
-                payroll.Month = month;
-                payroll.Year = year;
-                payroll.BaseSalary = baseSalary;
-                payroll.OvertimePay = overtime;
-                payroll.Deduction = deduction;
-                payroll.Bonus = bonus;
-                payroll.NetSalary = netSalary;
-                payroll.Status = cbStatus.Text?.Trim();
-                payroll.CreatedAt = dpCreatedAt.SelectedDate ?? DateTime.Now;
-
-                _payBLL.Update(payroll);
-                FillDataGridPayroll();
-                Clear();
+                MessageBox.Show("Please generate payroll first.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
             }
+
+            if (!TryGetSelectedMonthYear(out int month, out int year))
+            {
+                MessageBox.Show("Please select month and year.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (_payBLL.HasPayrolls(month, year))
+            {
+                MessageBox.Show("Payroll for this month already exists.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Warning);
+                LoadPayrollsFromDb(month, year);
+                ClearDetail();
+                return;
+            }
+
+            _payBLL.SavePayrolls(_generatedRows);
+            LoadPayrollsFromDb(month, year);
+            ClearDetail();
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        private void btnApprove_Click(object sender, RoutedEventArgs e)
         {
-            var payroll = dgPayroll.SelectedItem as Payroll;
-            if (payroll != null)
+            UpdateStatus("Approved");
+        }
+
+        private void btnPay_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateStatus("Paid");
+        }
+
+        private void UpdateStatus(string status)
+        {
+            if (!TryGetSelectedMonthYear(out int month, out int year))
             {
-                if (MessageBox.Show("Do you really want to delete this payroll?",
-                    "Warning",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                {
-                    _payBLL.Delete(payroll);
-                    FillDataGridPayroll();
-                    Clear();
-                }
+                MessageBox.Show("Please select month and year.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
             }
+
+            if (!_payBLL.HasPayrolls(month, year))
+            {
+                MessageBox.Show("No payrolls found for this month.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            _payBLL.UpdateStatus(month, year, status);
+            LoadPayrollsFromDb(month, year);
+            ClearDetail();
         }
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            ApplyFilters();
+            ApplySearch();
         }
 
-        private void cbFilterEmployees_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void btnClearSearch_Click(object sender, RoutedEventArgs e)
         {
-            ApplyFilters();
-        }
-
-        private void cbFilterMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilters();
-        }
-
-        private void cbFilterYear_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilters();
-        }
-
-        private void cbFilterStatus_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ApplyFilters();
-        }
-
-        private void btnClearFilter_Click(object sender, RoutedEventArgs e)
-        {
-            cbFilterEmployees.SelectedValue = null;
-            cbFilterMonth.SelectedValue = null;
-            cbFilterYear.SelectedValue = null;
-            cbFilterStatus.SelectedIndex = -1;
             txtSearch.Text = string.Empty;
-            FillDataGridPayroll();
+            ApplySearch();
         }
 
-        private void SalaryFields_TextChanged(object sender, TextChangedEventArgs e)
+        private void dgPayroll_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RecalculateNetSalary();
+            if (dgPayroll.SelectedItem is PayrollPreview payroll)
+            {
+                FillDetail(payroll);
+            }
         }
 
-        private void RecalculateNetSalary()
+        private void FillDetail(PayrollPreview payroll)
+        {
+            txtEmployee.Text = payroll.EmployeeName;
+            txtContract.Text = payroll.ContractType ?? string.Empty;
+            txtMonth.Text = payroll.Month.ToString();
+            txtYear.Text = payroll.Year.ToString();
+            txtBaseSalary.Text = payroll.BaseSalary.ToString("N2");
+            txtWorkDays.Text = payroll.WorkDays.ToString();
+            txtLeaveDays.Text = payroll.LeaveDays.ToString();
+            txtBonus.Text = payroll.Bonus.ToString("N2");
+            txtOvertime.Text = payroll.OvertimePay.ToString("N2");
+            txtDeduction.Text = payroll.Deduction.ToString("N2");
+            txtNetSalary.Text = payroll.NetSalary.ToString("N2");
+        }
+
+        private void ClearDetail()
+        {
+            txtEmployee.Text = string.Empty;
+            txtContract.Text = string.Empty;
+            txtMonth.Text = string.Empty;
+            txtYear.Text = string.Empty;
+            txtBaseSalary.Text = string.Empty;
+            txtWorkDays.Text = string.Empty;
+            txtLeaveDays.Text = string.Empty;
+            txtBonus.Text = string.Empty;
+            txtOvertime.Text = string.Empty;
+            txtDeduction.Text = string.Empty;
+            txtNetSalary.Text = string.Empty;
+        }
+
+        private void DetailSalary_TextChanged(object sender, TextChangedEventArgs e)
         {
             decimal baseSalary = GetDecimalOrZero(txtBaseSalary.Text);
-            decimal overtime = GetDecimalOrZero(txtOvertimePay.Text);
-            decimal deduction = GetDecimalOrZero(txtDeduction.Text);
             decimal bonus = GetDecimalOrZero(txtBonus.Text);
+            decimal overtime = GetDecimalOrZero(txtOvertime.Text);
+            decimal deduction = GetDecimalOrZero(txtDeduction.Text);
 
-            decimal net = baseSalary + overtime + bonus - deduction;
+            decimal net = baseSalary + bonus + overtime - deduction;
             txtNetSalary.Text = net.ToString("N2");
         }
 
-        private static decimal CalculateNetSalary(decimal? baseSalary, decimal? overtime, decimal? bonus, decimal? deduction)
+        private void btnUpdateRow_Click(object sender, RoutedEventArgs e)
         {
-            return (baseSalary ?? 0m) + (overtime ?? 0m) + (bonus ?? 0m) - (deduction ?? 0m);
-        }
-
-        private static decimal? ParseDecimal(string text)
-        {
-            if (decimal.TryParse(text.Trim(), out decimal value))
+            if (!_showingGenerated)
             {
-                return value;
+                MessageBox.Show("You can only edit bonus/overtime in preview mode.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
             }
 
-            return null;
+            if (dgPayroll.SelectedItem is not PayrollPreview payroll)
+            {
+                return;
+            }
+
+            payroll.Bonus = GetDecimalOrZero(txtBonus.Text);
+            payroll.OvertimePay = GetDecimalOrZero(txtOvertime.Text);
+            payroll.Deduction = GetDecimalOrZero(txtDeduction.Text);
+            payroll.NetSalary = GetDecimalOrZero(txtNetSalary.Text);
+
+            dgPayroll.Items.Refresh();
+        }
+
+        private bool TryGetSelectedMonthYear(out int month, out int year)
+        {
+            month = 0;
+            year = 0;
+
+            if (cbGenMonth.SelectedValue == null || cbGenYear.SelectedValue == null)
+            {
+                return false;
+            }
+
+            if (!int.TryParse(cbGenMonth.SelectedValue.ToString(), out month))
+            {
+                return false;
+            }
+
+            if (!int.TryParse(cbGenYear.SelectedValue.ToString(), out year))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         private static decimal GetDecimalOrZero(string text)

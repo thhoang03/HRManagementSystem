@@ -101,15 +101,7 @@ namespace HRManagementSystem.Views.Admin
             var setting = dgSettings.SelectedItem as Setting;
             if (setting != null)
             {
-                if (MessageBox.Show("Do you really want to delete this setting?",
-                    "Warning",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                {
-                    _settingBLL.Delete(setting);
-                    FillDgSettings();
-                    Clear();
-                }
+                MessageBox.Show("Setting does not support Status. Delete action is disabled.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

@@ -40,16 +40,6 @@
                     FontWeight="SemiBold"
                     Click="btnNew_Click"/>
 
-            <Button Content="Delete"
-                    x:Name="btnDelete"
-                    Width="100"
-                    Height="36"
-                    Margin="0,0,16,0"
-                    Background="#EF4444"
-                    Foreground="White"
-                    BorderThickness="0"
-                    Click="btnDelete_Click"/>
-
             <TextBox x:Name="txtSearch"
                      Width="220"
                      Height="36"

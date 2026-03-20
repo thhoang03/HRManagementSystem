@@ -55,17 +55,18 @@ namespace HRManagementSystem.Views.Admin
         {
             string name = txtPositionName.Text.Trim();
             string baseSalary_str = txtBaseSalary.Text.Trim();
-            decimal.TryParse(baseSalary_str, out decimal baseSalary);
-            if (baseSalary > 0) 
+            if (!TryGetPositionInput(name, baseSalary_str, out decimal baseSalary))
             {
-                Position p = new();
-                p.PositionName = name;
-                p.BaseSalary = baseSalary;
-
-                _posBLL.Add(p);
-                FillDataGridPositons();
-                Clear();
+                return;
             }
+
+            Position p = new();
+            p.PositionName = name;
+            p.BaseSalary = baseSalary;
+
+            _posBLL.Add(p);
+            FillDataGridPositons();
+            Clear();
         }
 
         private void dgPositions_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -85,16 +86,17 @@ namespace HRManagementSystem.Views.Admin
             {
                 string name = txtPositionName.Text.Trim();
                 string baseSalary_str = txtBaseSalary.Text.Trim();
-                decimal.TryParse(baseSalary_str, out decimal baseSalary);
-                if (baseSalary > 0)
+                if (!TryGetPositionInput(name, baseSalary_str, out decimal baseSalary))
                 {
-                    pos.PositionName = name;
-                    pos.BaseSalary = baseSalary;
-
-                    _posBLL.Update(pos);
-                    FillDataGridPositons();
-                    Clear();
+                    return;
                 }
+
+                pos.PositionName = name;
+                pos.BaseSalary = baseSalary;
+
+                _posBLL.Update(pos);
+                FillDataGridPositons();
+                Clear();
             }
         }
 
@@ -103,15 +105,7 @@ namespace HRManagementSystem.Views.Admin
             var pos = dgPositions.SelectedItem as Position;
             if (pos != null)
             {
-                if(MessageBox.Show("Do you really want to delete this position?",
-                    "Warning",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning)==MessageBoxResult.Yes)
-                {
-                    _posBLL.Delete(pos);
-                    FillDataGridPositons();
-                    Clear();
-                }
+                MessageBox.Show("Position does not support Status. Delete action is disabled.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
@@ -120,6 +114,34 @@ namespace HRManagementSystem.Views.Admin
             string name = txtSearch.Text.Trim();
             dgPositions.ItemsSource = null;
             dgPositions.ItemsSource = _posBLL.Search(name);
+        }
+
+        private bool TryGetPositionInput(string name, string baseSalaryText, out decimal baseSalary)
+        {
+            baseSalary = 0;
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                MessageBox.Show("Position name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtPositionName.Focus();
+                return false;
+            }
+
+            if (!decimal.TryParse(baseSalaryText, out baseSalary))
+            {
+                MessageBox.Show("Base salary must be a valid number.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtBaseSalary.Focus();
+                return false;
+            }
+
+            if (baseSalary <= 0)
+            {
+                MessageBox.Show("Base salary must be greater than 0.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtBaseSalary.Focus();
+                return false;
+            }
+
+            return true;
         }
     }
 }

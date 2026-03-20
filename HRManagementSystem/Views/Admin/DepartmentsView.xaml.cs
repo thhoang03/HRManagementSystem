@@ -49,9 +49,11 @@ namespace HRManagementSystem.Views.Admin
         {
             string name = txtDeptName.Text.Trim();
             string des = txtDescription.Text.Trim();
-            //validate
+            if (!ValidateDepartmentInput(name))
+            {
+                return;
+            }
 
-            //
             Department dept = new Department();
             dept.DepartmentName = name;
             dept.Description = des;
@@ -81,7 +83,13 @@ namespace HRManagementSystem.Views.Admin
             var dept = dgDepartments.SelectedItem as Department;
             if (dept != null)
             {
-                dept.DepartmentName = txtDeptName.Text.Trim();
+                string deptName = txtDeptName.Text.Trim();
+                if (!ValidateDepartmentInput(deptName))
+                {
+                    return;
+                }
+
+                dept.DepartmentName = deptName;
                 dept.Description = txtDescription.Text.Trim();
 
                 _deptBLL.Update(dept);
@@ -95,15 +103,7 @@ namespace HRManagementSystem.Views.Admin
             var dept = dgDepartments.SelectedItem as Department;
             if (dept != null)
             {
-                if (MessageBox.Show("Do you really want to delete this department?",
-                "Warning",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                {
-                    _deptBLL.Delete(dept);
-                    FillDataGridDepartments();
-                    Clear();
-                }
+                MessageBox.Show("Department does not support Status. Delete action is disabled.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
 
         }
@@ -113,6 +113,25 @@ namespace HRManagementSystem.Views.Admin
             string name = txtSearch.Text.Trim();
             dgDepartments.ItemsSource = null;
             dgDepartments.ItemsSource = _deptBLL.Search(name);
+        }
+
+        private bool ValidateDepartmentInput(string departmentName)
+        {
+            if (string.IsNullOrWhiteSpace(departmentName))
+            {
+                MessageBox.Show("Department name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtDeptName.Focus();
+                return false;
+            }
+
+            if (departmentName.Length > 100)
+            {
+                MessageBox.Show("Department name must be 100 characters or fewer.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtDeptName.Focus();
+                return false;
+            }
+
+            return true;
         }
     }
 }
