@@ -145,15 +145,7 @@ namespace HRManagementSystem.Views.Admin
             var user = dgUsers.SelectedItem as User;
             if (user != null)
             {
-                if (MessageBox.Show("Do you really want to delete this user?",
-                    "Warning",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                {
-                    _userBLL.Delete(user);
-                    FillDataGridUsers();
-                    Clear();
-                }
+                MessageBox.Show("User does not support Status. Delete action is disabled.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 

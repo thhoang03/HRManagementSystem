@@ -164,38 +164,18 @@ namespace HRManagementSystem.Views.Admin
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (cbEmployees.SelectedValue == null)
+            if (!TryGetAttendanceInput(out AttendanceInput input))
             {
                 return;
             }
 
-            int.TryParse(cbEmployees.SelectedValue.ToString(), out int empId);
-
-            DateOnly? attDate = null;
-            if (dpAttendanceDate.SelectedDate.HasValue)
-            {
-                attDate = DateOnly.FromDateTime(dpAttendanceDate.SelectedDate.Value);
-            }
-
-            DateTime? checkIn = null;
-            if (DateTime.TryParse(txtCheckIn.Text.Trim(), out DateTime checkInVal))
-            {
-                checkIn = checkInVal;
-            }
-
-            DateTime? checkOut = null;
-            if (DateTime.TryParse(txtCheckOut.Text.Trim(), out DateTime checkOutVal))
-            {
-                checkOut = checkOutVal;
-            }
-
             Attendance att = new();
-            att.EmployeeId = empId;
-            att.AttendanceDate = attDate;
-            att.CheckIn = checkIn;
-            att.CheckOut = checkOut;
-            att.Status = cbStatus.Text?.Trim();
-            att.DeviceIp = txtDeviceIp.Text.Trim();
+            att.EmployeeId = input.EmployeeId;
+            att.AttendanceDate = input.AttendanceDate;
+            att.CheckIn = input.CheckIn;
+            att.CheckOut = input.CheckOut;
+            att.Status = input.Status;
+            att.DeviceIp = input.DeviceIp;
 
             _attBLL.Add(att);
             FillDataGridAttendance();
@@ -207,58 +187,21 @@ namespace HRManagementSystem.Views.Admin
             var att = dgAttendance.SelectedItem as Attendance;
             if (att != null)
             {
-                if (cbEmployees.SelectedValue == null)
+                if (!TryGetAttendanceInput(out AttendanceInput input))
                 {
                     return;
                 }
 
-                int.TryParse(cbEmployees.SelectedValue.ToString(), out int empId);
-
-                DateOnly? attDate = null;
-                if (dpAttendanceDate.SelectedDate.HasValue)
-                {
-                    attDate = DateOnly.FromDateTime(dpAttendanceDate.SelectedDate.Value);
-                }
-
-                DateTime? checkIn = null;
-                if (DateTime.TryParse(txtCheckIn.Text.Trim(), out DateTime checkInVal))
-                {
-                    checkIn = checkInVal;
-                }
-
-                DateTime? checkOut = null;
-                if (DateTime.TryParse(txtCheckOut.Text.Trim(), out DateTime checkOutVal))
-                {
-                    checkOut = checkOutVal;
-                }
-
-                att.EmployeeId = empId;
-                att.AttendanceDate = attDate;
-                att.CheckIn = checkIn;
-                att.CheckOut = checkOut;
-                att.Status = cbStatus.Text?.Trim();
-                att.DeviceIp = txtDeviceIp.Text.Trim();
+                att.EmployeeId = input.EmployeeId;
+                att.AttendanceDate = input.AttendanceDate;
+                att.CheckIn = input.CheckIn;
+                att.CheckOut = input.CheckOut;
+                att.Status = input.Status;
+                att.DeviceIp = input.DeviceIp;
 
                 _attBLL.Update(att);
                 FillDataGridAttendance();
                 Clear();
-            }
-        }
-
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
-        {
-            var att = dgAttendance.SelectedItem as Attendance;
-            if (att != null)
-            {
-                if (MessageBox.Show("Do you really want to delete this attendance?",
-                    "Warning",
-                    MessageBoxButton.YesNo,
-                    MessageBoxImage.Warning) == MessageBoxResult.Yes)
-                {
-                    _attBLL.Delete(att);
-                    FillDataGridAttendance();
-                    Clear();
-                }
             }
         }
 
@@ -307,6 +250,81 @@ namespace HRManagementSystem.Views.Admin
                 Value = value;
                 Name = name;
             }
+        }
+
+        private bool TryGetAttendanceInput(out AttendanceInput input)
+        {
+            input = new AttendanceInput();
+
+            if (cbEmployees.SelectedValue == null || !int.TryParse(cbEmployees.SelectedValue.ToString(), out int empId))
+            {
+                MessageBox.Show("Please select a valid employee.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                cbEmployees.Focus();
+                return false;
+            }
+
+            if (!dpAttendanceDate.SelectedDate.HasValue)
+            {
+                MessageBox.Show("Attendance date is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                dpAttendanceDate.Focus();
+                return false;
+            }
+
+            DateOnly attendanceDate = DateOnly.FromDateTime(dpAttendanceDate.SelectedDate.Value);
+
+            DateTime? checkIn = null;
+            string checkInText = txtCheckIn.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(checkInText))
+            {
+                if (!DateTime.TryParse(checkInText, out DateTime checkInValue))
+                {
+                    MessageBox.Show("Check-in time is invalid.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    txtCheckIn.Focus();
+                    return false;
+                }
+                checkIn = checkInValue;
+            }
+
+            DateTime? checkOut = null;
+            string checkOutText = txtCheckOut.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(checkOutText))
+            {
+                if (!DateTime.TryParse(checkOutText, out DateTime checkOutValue))
+                {
+                    MessageBox.Show("Check-out time is invalid.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    txtCheckOut.Focus();
+                    return false;
+                }
+                checkOut = checkOutValue;
+            }
+
+            if (checkIn.HasValue && checkOut.HasValue && checkOut.Value < checkIn.Value)
+            {
+                MessageBox.Show("Check-out time cannot be earlier than check-in time.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtCheckOut.Focus();
+                return false;
+            }
+
+            input = new AttendanceInput
+            {
+                EmployeeId = empId,
+                AttendanceDate = attendanceDate,
+                CheckIn = checkIn,
+                CheckOut = checkOut,
+                Status = string.IsNullOrWhiteSpace(cbStatus.Text) ? null : cbStatus.Text.Trim(),
+                DeviceIp = string.IsNullOrWhiteSpace(txtDeviceIp.Text) ? null : txtDeviceIp.Text.Trim()
+            };
+            return true;
+        }
+
+        private sealed class AttendanceInput
+        {
+            public int EmployeeId { get; set; }
+            public DateOnly AttendanceDate { get; set; }
+            public DateTime? CheckIn { get; set; }
+            public DateTime? CheckOut { get; set; }
+            public string? Status { get; set; }
+            public string? DeviceIp { get; set; }
         }
     }
 }

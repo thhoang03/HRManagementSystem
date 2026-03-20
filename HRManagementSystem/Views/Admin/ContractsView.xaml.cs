@@ -83,33 +83,16 @@ namespace HRManagementSystem.Views.Admin
             var contract = dgContracts.SelectedItem as Contract;
             if (contract != null)
             {
-                if (cbEmployees.SelectedValue == null || !dpStartDate.SelectedDate.HasValue)
+                if (!TryGetContractInput(out ContractInput input))
                 {
                     return;
                 }
 
-                string? empIdStr = cbEmployees.SelectedValue.ToString();
-                string contractType = txtContractType.Text.Trim();
-                DateOnly startDate = DateOnly.FromDateTime(dpStartDate.SelectedDate.Value);
-                DateOnly? endDate = null;
-                if (dpEndDate.SelectedDate.HasValue)
-                {
-                    endDate = DateOnly.FromDateTime(dpEndDate.SelectedDate.Value);
-                }
-
-                decimal? salary = null;
-                if (decimal.TryParse(txtSalary.Text.Trim(), out decimal salaryValue))
-                {
-                    salary = salaryValue;
-                }
-
-                int.TryParse(empIdStr, out int empId);
-
-                contract.EmployeeId = empId;
-                contract.ContractType = contractType;
-                contract.StartDate = startDate;
-                contract.EndDate = endDate;
-                contract.ContractSalary = salary;
+                contract.EmployeeId = input.EmployeeId;
+                contract.ContractType = input.ContractType;
+                contract.StartDate = input.StartDate;
+                contract.EndDate = input.EndDate;
+                contract.ContractSalary = input.ContractSalary;
 
                 _contBLL.Update(contract);
                 FillDgContracts();
@@ -119,34 +102,17 @@ namespace HRManagementSystem.Views.Admin
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (cbEmployees.SelectedValue == null || !dpStartDate.SelectedDate.HasValue)
+            if (!TryGetContractInput(out ContractInput input))
             {
                 return;
             }
 
-            string? empIdStr = cbEmployees.SelectedValue.ToString();
-            string contractType = txtContractType.Text.Trim();
-            DateOnly startDate = DateOnly.FromDateTime(dpStartDate.SelectedDate.Value);
-            DateOnly? endDate = null;
-            if (dpEndDate.SelectedDate.HasValue)
-            {
-                endDate = DateOnly.FromDateTime(dpEndDate.SelectedDate.Value);
-            }
-
-            decimal? salary = null;
-            if (decimal.TryParse(txtSalary.Text.Trim(), out decimal salaryValue))
-            {
-                salary = salaryValue;
-            }
-
-            int.TryParse(empIdStr, out int empId);
-
             Contract contract = new();
-            contract.EmployeeId = empId;
-            contract.ContractType = contractType;
-            contract.StartDate = startDate;
-            contract.EndDate = endDate;
-            contract.ContractSalary = salary;
+            contract.EmployeeId = input.EmployeeId;
+            contract.ContractType = input.ContractType;
+            contract.StartDate = input.StartDate;
+            contract.EndDate = input.EndDate;
+            contract.ContractSalary = input.ContractSalary;
 
             _contBLL.Add(contract);
             FillDgContracts();
@@ -158,12 +124,31 @@ namespace HRManagementSystem.Views.Admin
             var contract = dgContracts.SelectedItem as Contract;
             if (contract != null)
             {
-                if (MessageBox.Show("Do you really want to delete this contract?",
+                if (MessageBox.Show("Do you really want to deactivate this contract?",
                     "Warning",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning) == MessageBoxResult.Yes)
                 {
-                    _contBLL.Delete(contract);
+                    contract.Status = "Deactive";
+                    _contBLL.Update(contract);
+                    FillDgContracts();
+                    Clear();
+                }
+            }
+        }
+
+        private void btnActive_Click(object sender, RoutedEventArgs e)
+        {
+            var contract = dgContracts.SelectedItem as Contract;
+            if (contract != null)
+            {
+                if (MessageBox.Show("Do you really want to active this contract?",
+                    "Confirmation",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    contract.Status = "Active";
+                    _contBLL.Update(contract);
                     FillDgContracts();
                     Clear();
                 }
@@ -175,6 +160,78 @@ namespace HRManagementSystem.Views.Admin
             string keyword = txtSearch.Text.Trim();
             dgContracts.ItemsSource = null;
             dgContracts.ItemsSource = _contBLL.Search(keyword);
+        }
+
+        private bool TryGetContractInput(out ContractInput input)
+        {
+            input = new ContractInput();
+
+            if (cbEmployees.SelectedValue == null || !int.TryParse(cbEmployees.SelectedValue.ToString(), out int empId))
+            {
+                MessageBox.Show("Please select a valid employee.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                cbEmployees.Focus();
+                return false;
+            }
+
+            if (!dpStartDate.SelectedDate.HasValue)
+            {
+                MessageBox.Show("Start date is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                dpStartDate.Focus();
+                return false;
+            }
+
+            DateOnly startDate = DateOnly.FromDateTime(dpStartDate.SelectedDate.Value);
+            DateOnly? endDate = null;
+            if (dpEndDate.SelectedDate.HasValue)
+            {
+                endDate = DateOnly.FromDateTime(dpEndDate.SelectedDate.Value);
+                if (endDate.Value < startDate)
+                {
+                    MessageBox.Show("End date cannot be earlier than start date.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    dpEndDate.Focus();
+                    return false;
+                }
+            }
+
+            decimal? salary = null;
+            string salaryText = txtSalary.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(salaryText))
+            {
+                if (!decimal.TryParse(salaryText, out decimal salaryValue))
+                {
+                    MessageBox.Show("Salary must be a valid number.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    txtSalary.Focus();
+                    return false;
+                }
+
+                if (salaryValue <= 0)
+                {
+                    MessageBox.Show("Salary must be greater than 0.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    txtSalary.Focus();
+                    return false;
+                }
+
+                salary = salaryValue;
+            }
+
+            input = new ContractInput
+            {
+                EmployeeId = empId,
+                ContractType = string.IsNullOrWhiteSpace(txtContractType.Text) ? null : txtContractType.Text.Trim(),
+                StartDate = startDate,
+                EndDate = endDate,
+                ContractSalary = salary
+            };
+            return true;
+        }
+
+        private sealed class ContractInput
+        {
+            public int EmployeeId { get; set; }
+            public string? ContractType { get; set; }
+            public DateOnly StartDate { get; set; }
+            public DateOnly? EndDate { get; set; }
+            public decimal? ContractSalary { get; set; }
         }
     }
 }

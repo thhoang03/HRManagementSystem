@@ -1,4 +1,4 @@
-﻿<Page x:Name="frmPayroll"
+<Page x:Name="frmPayroll"
       x:Class="HRManagementSystem.Views.Admin.PayrollView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -27,30 +27,84 @@
 
         <!-- ACTION BAR -->
 
-        <StackPanel Grid.Row="1" Margin="0,16,0,10" Orientation="Horizontal">
+        <StackPanel Grid.Row="1" Margin="0,16,0,10" Orientation="Horizontal" VerticalAlignment="Center">
 
-            <Button Content="+ New"
-                    x:Name="btnNew"
-                    Width="100"
+            <TextBlock Text="Month"
+                       VerticalAlignment="Center"
+                       Margin="0,0,8,0"
+                       Foreground="#475569"/>
+
+            <ComboBox x:Name="cbGenMonth"
+                      Width="120"
+                      Height="34"
+                      Margin="0,0,16,0"/>
+
+            <TextBlock Text="Year"
+                       VerticalAlignment="Center"
+                       Margin="0,0,8,0"
+                       Foreground="#475569"/>
+
+            <ComboBox x:Name="cbGenYear"
+                      Width="120"
+                      Height="34"
+                      Margin="0,0,16,0"/>
+
+            <Button Content="Generate"
+                    x:Name="btnGenerate"
+                    Width="110"
                     Height="36"
                     Margin="0,0,8,0"
                     Background="#F9D678"
                     BorderThickness="0"
                     FontWeight="SemiBold"
-                    Click="btnNew_Click"/>
+                    Click="btnGenerate_Click"/>
 
-            <Button Content="Delete"
-                    x:Name="btnDelete"
-                    Width="100"
+            <Button Content="Save Payroll"
+                    x:Name="btnSavePayroll"
+                    Width="120"
                     Height="36"
-                    Margin="0,0,16,0"
-                    Background="#EF4444"
+                    Margin="0,0,8,0"
+                    Background="#22C55E"
                     Foreground="White"
                     BorderThickness="0"
-                    Click="btnDelete_Click"/>
+                    FontWeight="SemiBold"
+                    Click="btnSavePayroll_Click"/>
+
+            <Button Content="Approve"
+                    x:Name="btnApprove"
+                    Width="100"
+                    Height="36"
+                    Margin="0,0,8,0"
+                    Background="#3B82F6"
+                    Foreground="White"
+                    BorderThickness="0"
+                    FontWeight="SemiBold"
+                    Click="btnApprove_Click"/>
+
+            <Button Content="Pay"
+                    x:Name="btnPay"
+                    Width="90"
+                    Height="36"
+                    Margin="0,0,12,0"
+                    Background="#0EA5E9"
+                    Foreground="White"
+                    BorderThickness="0"
+                    FontWeight="SemiBold"
+                    Click="btnPay_Click"/>
+
+            <TextBlock x:Name="txtMode"
+                       VerticalAlignment="Center"
+                       Foreground="#64748B"
+                       FontStyle="Italic"/>
+
+        </StackPanel>
+
+        <!-- SEARCH -->
+
+        <StackPanel Grid.Row="2" Margin="0,0,0,16" Orientation="Horizontal">
 
             <TextBox x:Name="txtSearch"
-                     Width="220"
+                     Width="260"
                      Height="36"
                      Padding="8"
                      Margin="0,0,8,0"
@@ -59,84 +113,15 @@
                      BorderThickness="1"
                      TextChanged="txtSearch_TextChanged"/>
 
-            <Button Content="Search"
-                    Width="90"
+            <Button Content="Clear"
                     Height="36"
-                    Background="#F9D678"
+                    Padding="16,0"
+                    Background="#E2E8F0"
                     BorderThickness="0"
-                    FontWeight="SemiBold"/>
+                    Foreground="#0F172A"
+                    Click="btnClearSearch_Click"/>
 
         </StackPanel>
-
-        <!-- FILTERS -->
-
-        <Border Grid.Row="2"
-                Background="White"
-                Padding="12"
-                CornerRadius="8"
-                Margin="0,0,0,16">
-
-            <StackPanel Orientation="Horizontal">
-
-                <TextBlock Text="Employee"
-                           VerticalAlignment="Center"
-                           Margin="0,0,8,0"
-                           Foreground="#475569"/>
-
-                <ComboBox x:Name="cbFilterEmployees"
-                          Width="220"
-                          Height="34"
-                          Margin="0,0,16,0"
-                          SelectionChanged="cbFilterEmployees_SelectionChanged"/>
-
-                <TextBlock Text="Month"
-                           VerticalAlignment="Center"
-                           Margin="0,0,8,0"
-                           Foreground="#475569"/>
-
-                <ComboBox x:Name="cbFilterMonth"
-                          Width="140"
-                          Height="34"
-                          Margin="0,0,16,0"
-                          SelectionChanged="cbFilterMonth_SelectionChanged"/>
-
-                <TextBlock Text="Year"
-                           VerticalAlignment="Center"
-                           Margin="0,0,8,0"
-                           Foreground="#475569"/>
-
-                <ComboBox x:Name="cbFilterYear"
-                          Width="110"
-                          Height="34"
-                          Margin="0,0,16,0"
-                          SelectionChanged="cbFilterYear_SelectionChanged"/>
-
-                <TextBlock Text="Status"
-                           VerticalAlignment="Center"
-                           Margin="0,0,8,0"
-                           Foreground="#475569"/>
-
-                <ComboBox x:Name="cbFilterStatus"
-                          Width="130"
-                          Height="34"
-                          Margin="0,0,16,0"
-                          SelectionChanged="cbFilterStatus_SelectionChanged">
-                    <ComboBoxItem Content="Pending"/>
-                    <ComboBoxItem Content="Paid"/>
-                    <ComboBoxItem Content="Canceled"/>
-                </ComboBox>
-
-                <Button Content="Clear"
-                        Height="34"
-                        Padding="14,0"
-                        Background="#E2E8F0"
-                        BorderThickness="0"
-                        Foreground="#0F172A"
-                        Click="btnClearFilter_Click"/>
-
-            </StackPanel>
-
-        </Border>
 
         <!-- CONTENT -->
 
@@ -175,36 +160,44 @@
                                             Width="0.5*"/>
 
                         <DataGridTextColumn Header="Employee"
-                                            Binding="{Binding Employee.FullName}"
-                                            Width="1.5*"/>
+                                            Binding="{Binding EmployeeName}"
+                                            Width="1.6*"/>
 
                         <DataGridTextColumn Header="Contract"
-                                            Binding="{Binding Contract.ContractType}"
+                                            Binding="{Binding ContractType}"
                                             Width="1*"/>
 
                         <DataGridTextColumn Header="Month"
                                             Binding="{Binding Month}"
-                                            Width="0.5*"/>
+                                            Width="0.6*"/>
 
                         <DataGridTextColumn Header="Year"
                                             Binding="{Binding Year}"
-                                            Width="0.5*"/>
+                                            Width="0.6*"/>
 
                         <DataGridTextColumn Header="Base"
                                             Binding="{Binding BaseSalary,StringFormat=N2}"
                                             Width="1*"/>
 
-                        <DataGridTextColumn Header="Overtime"
-                                            Binding="{Binding OvertimePay,StringFormat=N2}"
-                                            Width="1*"/>
+                        <DataGridTextColumn Header="Work"
+                                            Binding="{Binding WorkDays}"
+                                            Width="0.7*"/>
 
-                        <DataGridTextColumn Header="Deduction"
-                                            Binding="{Binding Deduction,StringFormat=N2}"
-                                            Width="1*"/>
+                        <DataGridTextColumn Header="Leave"
+                                            Binding="{Binding LeaveDays}"
+                                            Width="0.7*"/>
 
                         <DataGridTextColumn Header="Bonus"
                                             Binding="{Binding Bonus,StringFormat=N2}"
-                                            Width="1*"/>
+                                            Width="0.9*"/>
+
+                        <DataGridTextColumn Header="Overtime"
+                                            Binding="{Binding OvertimePay,StringFormat=N2}"
+                                            Width="0.9*"/>
+
+                        <DataGridTextColumn Header="Deduction"
+                                            Binding="{Binding Deduction,StringFormat=N2}"
+                                            Width="0.9*"/>
 
                         <DataGridTextColumn Header="Net"
                                             Binding="{Binding NetSalary,StringFormat=N2}"
@@ -213,10 +206,6 @@
                         <DataGridTextColumn Header="Status"
                                             Binding="{Binding Status}"
                                             Width="0.8*"/>
-
-                        <DataGridTextColumn Header="Created"
-                                            Binding="{Binding CreatedAt,StringFormat=g}"
-                                            Width="1.2*"/>
 
                     </DataGrid.Columns>
 
@@ -245,25 +234,36 @@
                                    Margin="0,0,0,20"/>
 
                         <TextBlock Text="Employee"/>
-                        <ComboBox x:Name="cbEmployees"
-                                  Margin="0,6,0,12"
-                                  Height="34"
-                                  SelectionChanged="cbEmployees_SelectionChanged"/>
+                        <TextBox x:Name="txtEmployee"
+                                 Height="34"
+                                 Margin="0,6,0,12"
+                                 Padding="8"
+                                 BorderBrush="#CBD5E1"
+                                 IsReadOnly="True"/>
 
                         <TextBlock Text="Contract"/>
-                        <ComboBox x:Name="cbContracts"
-                                  Margin="0,6,0,12"
-                                  Height="34"/>
+                        <TextBox x:Name="txtContract"
+                                 Height="34"
+                                 Margin="0,6,0,12"
+                                 Padding="8"
+                                 BorderBrush="#CBD5E1"
+                                 IsReadOnly="True"/>
 
                         <TextBlock Text="Month"/>
-                        <ComboBox x:Name="cbMonth"
-                                  Margin="0,6,0,12"
-                                  Height="34"/>
+                        <TextBox x:Name="txtMonth"
+                                 Height="34"
+                                 Margin="0,6,0,12"
+                                 Padding="8"
+                                 BorderBrush="#CBD5E1"
+                                 IsReadOnly="True"/>
 
                         <TextBlock Text="Year"/>
-                        <ComboBox x:Name="cbYear"
-                                  Margin="0,6,0,12"
-                                  Height="34"/>
+                        <TextBox x:Name="txtYear"
+                                 Height="34"
+                                 Margin="0,6,0,12"
+                                 Padding="8"
+                                 BorderBrush="#CBD5E1"
+                                 IsReadOnly="True"/>
 
                         <TextBlock Text="Base Salary"/>
                         <TextBox x:Name="txtBaseSalary"
@@ -271,23 +271,23 @@
                                  Margin="0,6,0,12"
                                  Padding="8"
                                  BorderBrush="#CBD5E1"
-                                 TextChanged="SalaryFields_TextChanged"/>
+                                 IsReadOnly="True"/>
 
-                        <TextBlock Text="Overtime Pay"/>
-                        <TextBox x:Name="txtOvertimePay"
+                        <TextBlock Text="Work Days"/>
+                        <TextBox x:Name="txtWorkDays"
                                  Height="34"
                                  Margin="0,6,0,12"
                                  Padding="8"
                                  BorderBrush="#CBD5E1"
-                                 TextChanged="SalaryFields_TextChanged"/>
+                                 IsReadOnly="True"/>
 
-                        <TextBlock Text="Deduction"/>
-                        <TextBox x:Name="txtDeduction"
+                        <TextBlock Text="Leave Days"/>
+                        <TextBox x:Name="txtLeaveDays"
                                  Height="34"
                                  Margin="0,6,0,12"
                                  Padding="8"
                                  BorderBrush="#CBD5E1"
-                                 TextChanged="SalaryFields_TextChanged"/>
+                                 IsReadOnly="True"/>
 
                         <TextBlock Text="Bonus"/>
                         <TextBox x:Name="txtBonus"
@@ -295,55 +295,44 @@
                                  Margin="0,6,0,12"
                                  Padding="8"
                                  BorderBrush="#CBD5E1"
-                                 TextChanged="SalaryFields_TextChanged"/>
+                                 TextChanged="DetailSalary_TextChanged"/>
+
+                        <TextBlock Text="Overtime Pay"/>
+                        <TextBox x:Name="txtOvertime"
+                                 Height="34"
+                                 Margin="0,6,0,12"
+                                 Padding="8"
+                                 BorderBrush="#CBD5E1"
+                                 TextChanged="DetailSalary_TextChanged"/>
+
+                        <TextBlock Text="Deduction"/>
+                        <TextBox x:Name="txtDeduction"
+                                 Height="34"
+                                 Margin="0,6,0,12"
+                                 Padding="8"
+                                 BorderBrush="#CBD5E1"
+                                 IsReadOnly="True"/>
 
                         <TextBlock Text="Net Salary"/>
                         <TextBox x:Name="txtNetSalary"
                                  Height="34"
-                                 Margin="0,6,0,12"
+                                 Margin="0,6,0,20"
                                  Padding="8"
                                  BorderBrush="#CBD5E1"
                                  Background="#F1F5F9"
                                  IsReadOnly="True"/>
 
-                        <TextBlock Text="Status"/>
-                        <ComboBox x:Name="cbStatus"
-                                  Margin="0,6,0,12"
-                                  Height="34">
-                            <ComboBoxItem Content="Pending"/>
-                            <ComboBoxItem Content="Paid"/>
-                            <ComboBoxItem Content="Canceled"/>
-                        </ComboBox>
-
-                        <TextBlock Text="Created At"/>
-                        <DatePicker x:Name="dpCreatedAt"
-                                    Margin="0,6,0,20"
-                                    Height="34"/>
-
-                        <!-- ACTION BUTTONS -->
-
                         <StackPanel Orientation="Horizontal"
                                     HorizontalAlignment="Right">
 
-                            <Button Content="Add"
-                                    x:Name="btnAdd"
-                                    Width="100"
-                                    Height="36"
-                                    Margin="0,0,8,0"
-                                    Background="#22C55E"
-                                    Foreground="White"
-                                    BorderThickness="0"
-                                    FontWeight="SemiBold"
-                                    Click="btnAdd_Click"/>
-
-                            <Button Content="Update"
-                                    x:Name="btnUpdate"
-                                    Width="100"
+                            <Button Content="Update Row"
+                                    x:Name="btnUpdateRow"
+                                    Width="120"
                                     Height="36"
                                     Background="#F9D678"
                                     BorderThickness="0"
                                     FontWeight="SemiBold"
-                                    Click="btnUpdate_Click"/>
+                                    Click="btnUpdateRow_Click"/>
 
                         </StackPanel>
 

@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Net.Mail;
 
 namespace HRManagementSystem.Views.Admin
 {
@@ -34,13 +35,13 @@ namespace HRManagementSystem.Views.Admin
         {
             txtName.Text = string.Empty;
             rbMale.IsChecked = true;
-            dpDOB = null;
+            dpDOB.SelectedDate = null;
             txtEmail.Text = string.Empty;
             txtPhone.Text = string.Empty;
             txtAddress.Text = string.Empty;
-            dpHireDate = null;
-            cbDepartments = null;
-            cbPositions = null;
+            dpHireDate.SelectedDate = null;
+            cbDepartments.SelectedValue = null;
+            cbPositions.SelectedValue = null;
         }
 
         private void FillComboDepartments()
@@ -80,41 +81,21 @@ namespace HRManagementSystem.Views.Admin
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            string name = txtName.Text.Trim();
-            string gender = (rbMale.IsChecked == true) ? "Male" : "Female";
-            DateOnly? dob = null;
-            if (dpDOB.SelectedDate.HasValue)
+            if (!TryGetEmployeeInput(out EmployeeInput input))
             {
-                dob = DateOnly.FromDateTime(dpDOB.SelectedDate.Value);
+                return;
             }
-            string mail = txtEmail.Text.Trim();
-            string phone = txtPhone.Text.Trim();
-            string address = txtAddress.Text.Trim();
-            DateOnly? hireDate = null;
-            if (dpHireDate.SelectedDate.HasValue)
-            {
-                hireDate = DateOnly.FromDateTime(dpHireDate.SelectedDate.Value);
-            }
-            string? deptId_str = cbDepartments.SelectedValue.ToString();
-            string? posId_str = cbPositions.SelectedValue.ToString();
 
-            //validate
-
-            int.TryParse(deptId_str, out int deptId);
-            int.TryParse(posId_str, out int posId);
-            //
-
-            //
             Employee emp = new Employee();
-            emp.FullName = name;
-            emp.Gender = gender;
-            emp.DoB = dob;
-            emp.Email = mail;
-            emp.Phone = phone;
-            emp.Address = address;
-            emp.HireDate = hireDate;
-            emp.DepartmentId = deptId;
-            emp.PositionId = posId;
+            emp.FullName = input.FullName;
+            emp.Gender = input.Gender;
+            emp.DoB = input.DoB;
+            emp.Email = input.Email;
+            emp.Phone = input.Phone;
+            emp.Address = input.Address;
+            emp.HireDate = input.HireDate;
+            emp.DepartmentId = input.DepartmentId;
+            emp.PositionId = input.PositionId;
 
             _empBLL.Add(emp);
             FillDataGridEmployees();
@@ -144,40 +125,20 @@ namespace HRManagementSystem.Views.Admin
             var emp = dgEmployees.SelectedItem as Employee;
             if (emp != null)
             {
-                string name = txtName.Text.Trim();
-                string gender = (rbMale.IsChecked == true) ? "Male" : "Female";
-                DateOnly? dob = null;
-                if (dpDOB.SelectedDate.HasValue)
+                if (!TryGetEmployeeInput(out EmployeeInput input))
                 {
-                    dob = DateOnly.FromDateTime(dpDOB.SelectedDate.Value);
+                    return;
                 }
-                string mail = txtEmail.Text.Trim();
-                string phone = txtPhone.Text.Trim();
-                string address = txtAddress.Text.Trim();
-                DateOnly? hireDate = null;
-                if (dpHireDate.SelectedDate.HasValue)
-                {
-                    hireDate = DateOnly.FromDateTime(dpHireDate.SelectedDate.Value);
-                }
-                string? deptId_str = cbDepartments.SelectedValue.ToString();
-                string? posId_str = cbPositions.SelectedValue.ToString();
 
-                //validate
-
-                int.TryParse(deptId_str, out int deptId);
-                int.TryParse(posId_str, out int posId);
-                //
-
-                //
-                emp.FullName = name;
-                emp.Gender = gender;
-                emp.DoB = dob;
-                emp.Email = mail;
-                emp.Phone = phone;
-                emp.Address = address;
-                emp.HireDate = hireDate;
-                emp.DepartmentId = deptId;
-                emp.PositionId = posId;
+                emp.FullName = input.FullName;
+                emp.Gender = input.Gender;
+                emp.DoB = input.DoB;
+                emp.Email = input.Email;
+                emp.Phone = input.Phone;
+                emp.Address = input.Address;
+                emp.HireDate = input.HireDate;
+                emp.DepartmentId = input.DepartmentId;
+                emp.PositionId = input.PositionId;
 
                 _empBLL.Update(emp);
                 FillDataGridEmployees();
@@ -190,12 +151,31 @@ namespace HRManagementSystem.Views.Admin
             var emp = dgEmployees.SelectedItem as Employee;
             if (emp != null)
             {
-                if(MessageBox.Show("Do you really want to delete this employee?",
+                if(MessageBox.Show("Do you really want to deactivate this employee?",
                     "Warning",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Warning)==MessageBoxResult.Yes)
                 {
-                    _empBLL.Delete(emp);
+                    emp.Status = "Deactive";
+                    _empBLL.Update(emp);
+                    FillDataGridEmployees();
+                    Clear();
+                }
+            }
+        }
+
+        private void btnActive_Click(object sender, RoutedEventArgs e)
+        {
+            var emp = dgEmployees.SelectedItem as Employee;
+            if (emp != null)
+            {
+                if (MessageBox.Show("Do you really want to active this employee?",
+                    "Confirmation",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    emp.Status = "Active";
+                    _empBLL.Update(emp);
                     FillDataGridEmployees();
                     Clear();
                 }
@@ -206,6 +186,116 @@ namespace HRManagementSystem.Views.Admin
         {
             string name = txtSearch.Text.Trim();
             dgEmployees.ItemsSource = _empBLL.Search(name);
+        }
+
+        private bool TryGetEmployeeInput(out EmployeeInput input)
+        {
+            input = new EmployeeInput();
+
+            string name = txtName.Text.Trim();
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                MessageBox.Show("Employee name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtName.Focus();
+                return false;
+            }
+
+            if (cbDepartments.SelectedValue == null || !int.TryParse(cbDepartments.SelectedValue.ToString(), out int deptId))
+            {
+                MessageBox.Show("Please select a valid department.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                cbDepartments.Focus();
+                return false;
+            }
+
+            if (cbPositions.SelectedValue == null || !int.TryParse(cbPositions.SelectedValue.ToString(), out int posId))
+            {
+                MessageBox.Show("Please select a valid position.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                cbPositions.Focus();
+                return false;
+            }
+
+            DateOnly? dob = null;
+            if (dpDOB.SelectedDate.HasValue)
+            {
+                DateTime dobDate = dpDOB.SelectedDate.Value.Date;
+                if (dobDate > DateTime.Today)
+                {
+                    MessageBox.Show("Date of birth cannot be in the future.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    dpDOB.Focus();
+                    return false;
+                }
+                dob = DateOnly.FromDateTime(dobDate);
+            }
+
+            DateOnly? hireDate = null;
+            if (dpHireDate.SelectedDate.HasValue)
+            {
+                DateTime hireDateValue = dpHireDate.SelectedDate.Value.Date;
+                if (hireDateValue > DateTime.Today)
+                {
+                    MessageBox.Show("Hire date cannot be in the future.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    dpHireDate.Focus();
+                    return false;
+                }
+
+                if (dpDOB.SelectedDate.HasValue && hireDateValue < dpDOB.SelectedDate.Value.Date)
+                {
+                    MessageBox.Show("Hire date cannot be earlier than date of birth.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    dpHireDate.Focus();
+                    return false;
+                }
+                hireDate = DateOnly.FromDateTime(hireDateValue);
+            }
+
+            string email = txtEmail.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                if (!MailAddress.TryCreate(email, out _))
+                {
+                    MessageBox.Show("Email format is invalid.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    txtEmail.Focus();
+                    return false;
+                }
+            }
+
+            string phone = txtPhone.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(phone))
+            {
+                bool isPhoneValid = phone.All(c => char.IsDigit(c) || c == '+' || c == '-' || c == ' ');
+                if (!isPhoneValid)
+                {
+                    MessageBox.Show("Phone number contains invalid characters.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    txtPhone.Focus();
+                    return false;
+                }
+            }
+
+            input = new EmployeeInput
+            {
+                FullName = name,
+                Gender = (rbMale.IsChecked == true) ? "Male" : "Female",
+                DoB = dob,
+                Email = string.IsNullOrWhiteSpace(email) ? null : email,
+                Phone = string.IsNullOrWhiteSpace(phone) ? null : phone,
+                Address = string.IsNullOrWhiteSpace(txtAddress.Text) ? null : txtAddress.Text.Trim(),
+                HireDate = hireDate,
+                DepartmentId = deptId,
+                PositionId = posId
+            };
+            return true;
+        }
+
+        private sealed class EmployeeInput
+        {
+            public string FullName { get; set; } = string.Empty;
+            public string? Gender { get; set; }
+            public DateOnly? DoB { get; set; }
+            public string? Email { get; set; }
+            public string? Phone { get; set; }
+            public string? Address { get; set; }
+            public DateOnly? HireDate { get; set; }
+            public int DepartmentId { get; set; }
+            public int PositionId { get; set; }
         }
     }
 }
