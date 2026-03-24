@@ -1,6 +1,8 @@
 using HRManagementSystem.BLL;
 using HRManagementSystem.Models;
 using HRManagementSystem.Views.Admin;
+using HRManagementSystem.Views.Employee;
+using HRManagementSystem.Views.Manager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,9 +49,24 @@ namespace HRManagementSystem
                 _userBLL.Update(user);
 
                 Application.Current.Properties["CurrentUser"] = user;
+                string role = user.Role?.Trim() ?? string.Empty;
 
-                MainAdmin mainAdmin = new MainAdmin();
-                mainAdmin.Show();
+                if (role.Equals("Employee", StringComparison.OrdinalIgnoreCase))
+                {
+                    MainEmployee mainEmployee = new MainEmployee();
+                    mainEmployee.Show();
+                }
+                else if (role.Equals("Manager", StringComparison.OrdinalIgnoreCase))
+                {
+                    MainManager mainManager = new MainManager();
+                    mainManager.Show();
+                }
+                else
+                {
+                    MainAdmin mainAdmin = new MainAdmin();
+                    mainAdmin.Show();
+                }
+
                 this.Close();
             }
             else
