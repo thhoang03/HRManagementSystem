@@ -1,5 +1,6 @@
-﻿using HRManagementSystem.BLL;
+using HRManagementSystem.BLL;
 using HRManagementSystem.Models;
+using EmployeeModel = HRManagementSystem.Models.Employee;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,7 +87,7 @@ namespace HRManagementSystem.Views.Admin
                 return;
             }
 
-            Employee emp = new Employee();
+            EmployeeModel emp = new EmployeeModel();
             emp.FullName = input.FullName;
             emp.Gender = input.Gender;
             emp.DoB = input.DoB;
@@ -104,12 +105,12 @@ namespace HRManagementSystem.Views.Admin
 
         private void dgEmployees_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var emp = dgEmployees.SelectedValue as Employee;
+            var emp = dgEmployees.SelectedValue as EmployeeModel;
             if (emp != null)
             {
                 txtName.Text = emp.FullName;
-                rbMale.IsChecked = emp.Gender.Equals("Male") ? true : false;
-                rbFemale.IsChecked = emp.Gender.Equals("Female") ? true : false;
+                rbMale.IsChecked = string.Equals(emp.Gender, "Male", StringComparison.OrdinalIgnoreCase);
+                rbFemale.IsChecked = string.Equals(emp.Gender, "Female", StringComparison.OrdinalIgnoreCase);
                 dpDOB.SelectedDate = emp.DoB?.ToDateTime(TimeOnly.MinValue);
                 txtEmail.Text = emp.Email;
                 txtPhone.Text = emp.Phone;
@@ -122,7 +123,7 @@ namespace HRManagementSystem.Views.Admin
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            var emp = dgEmployees.SelectedItem as Employee;
+            var emp = dgEmployees.SelectedItem as EmployeeModel;
             if (emp != null)
             {
                 if (!TryGetEmployeeInput(out EmployeeInput input))
@@ -148,7 +149,7 @@ namespace HRManagementSystem.Views.Admin
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            var emp = dgEmployees.SelectedItem as Employee;
+            var emp = dgEmployees.SelectedItem as EmployeeModel;
             if (emp != null)
             {
                 if(MessageBox.Show("Do you really want to deactivate this employee?",
@@ -166,7 +167,7 @@ namespace HRManagementSystem.Views.Admin
 
         private void btnActive_Click(object sender, RoutedEventArgs e)
         {
-            var emp = dgEmployees.SelectedItem as Employee;
+            var emp = dgEmployees.SelectedItem as EmployeeModel;
             if (emp != null)
             {
                 if (MessageBox.Show("Do you really want to active this employee?",
@@ -299,3 +300,6 @@ namespace HRManagementSystem.Views.Admin
         }
     }
 }
+
+
+
