@@ -31,8 +31,8 @@ namespace HRManagementSystem.Views.Admin
             if (Application.Current.Properties.Contains("CurrentUser"))
             {
                 var user = Application.Current.Properties["CurrentUser"] as User;
-                txtUserName.Text = user.Username;
-                txtUserRole.Text = user.Role;
+                txtUserName.Text = user?.Username ?? string.Empty;
+                txtUserRole.Text = user?.Role ?? string.Empty;
             }
 
             SetCollapsed(false);

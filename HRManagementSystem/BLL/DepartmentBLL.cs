@@ -25,7 +25,7 @@ namespace HRManagementSystem.BLL
 
             return _deptDAL.GetAll()
                            .Where(d => d.DepartmentName.Contains(name, StringComparison.OrdinalIgnoreCase)
-                                    || d.Description.Contains(name, StringComparison.OrdinalIgnoreCase))
+                                    || (d.Description ?? string.Empty).Contains(name, StringComparison.OrdinalIgnoreCase))
                            .ToList();
         }
 

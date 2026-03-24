@@ -39,13 +39,18 @@ public partial class HrmanagementSystemContext : DbContext
     {
         optionsBuilder.UseSqlServer(GetConnectionString());
     }
-    private String GetConnectionString()
+    private string GetConnectionString()
     {
         IConfiguration config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", true, true)
             .Build();
         var strConn = config["ConnectionStrings:DefaultConnectionString"];
+
+        if (string.IsNullOrWhiteSpace(strConn))
+        {
+            throw new InvalidOperationException("Missing 'ConnectionStrings:DefaultConnectionString' in appsettings.json.");
+        }
 
         return strConn;
     }

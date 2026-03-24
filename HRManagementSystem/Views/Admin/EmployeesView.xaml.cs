@@ -109,8 +109,8 @@ namespace HRManagementSystem.Views.Admin
             if (emp != null)
             {
                 txtName.Text = emp.FullName;
-                rbMale.IsChecked = emp.Gender.Equals("Male") ? true : false;
-                rbFemale.IsChecked = emp.Gender.Equals("Female") ? true : false;
+                rbMale.IsChecked = string.Equals(emp.Gender, "Male", StringComparison.OrdinalIgnoreCase);
+                rbFemale.IsChecked = string.Equals(emp.Gender, "Female", StringComparison.OrdinalIgnoreCase);
                 dpDOB.SelectedDate = emp.DoB?.ToDateTime(TimeOnly.MinValue);
                 txtEmail.Text = emp.Email;
                 txtPhone.Text = emp.Phone;
