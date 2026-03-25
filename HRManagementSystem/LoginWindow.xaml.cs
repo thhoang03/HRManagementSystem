@@ -61,10 +61,15 @@ namespace HRManagementSystem
                     MainManager mainManager = new MainManager();
                     mainManager.Show();
                 }
-                else
+                else if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
                 {
                     MainAdmin mainAdmin = new MainAdmin();
                     mainAdmin.Show();
+                }
+                else
+                {
+                    MessageBox.Show("Vai trò người dùng không hợp lệ!", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
                 }
 
                 this.Close();
