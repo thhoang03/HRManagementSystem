@@ -28,5 +28,10 @@ namespace HRManagementSystem.Views.Admin
         {
             MainFrame.Navigate(new WelcomeView());
         }
+
+        private void Sidebar_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

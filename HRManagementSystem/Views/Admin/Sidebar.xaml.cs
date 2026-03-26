@@ -191,5 +191,10 @@ namespace HRManagementSystem.Views.Admin
                 btnLogout
             };
         }
+
+        private void btnReports_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
