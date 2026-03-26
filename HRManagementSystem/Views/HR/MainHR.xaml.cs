@@ -1,4 +1,3 @@
-using HRManagementSystem.Views.Admin;
 using System.Windows;
 
 namespace HRManagementSystem.Views.HR
@@ -15,7 +14,7 @@ namespace HRManagementSystem.Views.HR
 
         private void MainHR_Loaded(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new WelcomeView());
+            MainFrame.Navigate(new HRDashboard());
         }
     }
 }

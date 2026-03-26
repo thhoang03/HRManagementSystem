@@ -1,0 +1,67 @@
+<UserControl x:Class="HRManagementSystem.Views.HR.HRDashboard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d">
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="HR Dashboard" FontSize="24" FontWeight="Bold" Foreground="#0F172A"/>
+
+        <Border Grid.Row="1" Background="White" Padding="12" CornerRadius="8" Margin="0,12,0,12">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                <StackPanel Width="380">
+                    <TextBlock Text="Add Employee" FontSize="16" FontWeight="SemiBold"/>
+
+                    <TextBlock Text="Full Name" Margin="0,8,0,0"/>
+                    <TextBox x:Name="txtFullName" />
+
+                    <TextBlock Text="Email" Margin="0,8,0,0"/>
+                    <TextBox x:Name="txtEmail" />
+
+                    <TextBlock Text="Phone" Margin="0,8,0,0"/>
+                    <TextBox x:Name="txtPhone" MaxLength="10" PreviewTextInput="txtPhone_PreviewTextInput" AllowDrop="False" DataObject.Pasting="txtPhone_Pasting" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                        <StackPanel Width="180">
+                            <TextBlock Text="Department"/>
+                            <ComboBox x:Name="cbDepartment" DisplayMemberPath="DepartmentName" SelectedValuePath="DepartmentId"/>
+                        </StackPanel>
+                        <StackPanel Width="180" Margin="8,0,0,0">
+                            <TextBlock Text="Position"/>
+                            <ComboBox x:Name="cbPosition" DisplayMemberPath="PositionName" SelectedValuePath="PositionId"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                        <Button x:Name="btnAddEmployee" Content="Add Employee" Width="120" Click="btnAddEmployee_Click" />
+                        <Button x:Name="btnGoContracts" Content="Go to Contracts" Width="120" Margin="8,0,0,0" Click="btnGoContracts_Click" />
+                    </StackPanel>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <StackPanel Grid.Row="2">
+            <TextBlock Text="Employees" FontSize="18" FontWeight="SemiBold" Margin="0,6,0,8"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,6">
+                <Button x:Name="btnDeleteEmployee" Content="Delete Employee" Width="120" Click="btnDeleteEmployee_Click"/>
+            </StackPanel>
+            <DataGrid x:Name="dgEmployees" AutoGenerateColumns="False" CanUserAddRows="False" Height="280" IsReadOnly="True" SelectionMode="Single">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ID" Binding="{Binding EmployeeId}" Width="60" />
+                    <DataGridTextColumn Header="Full Name" Binding="{Binding FullName}" Width="*" />
+                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="180" />
+                    <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="120" />
+                    <DataGridTextColumn Header="Department" Binding="{Binding Department.DepartmentName}" Width="140" />
+                    <DataGridTextColumn Header="Position" Binding="{Binding Position.PositionName}" Width="140" />
+                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+    </Grid>
+</UserControl>
