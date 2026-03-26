@@ -1,4 +1,5 @@
 ﻿using HRManagementSystem.Models;
+using HRManagementSystem.Views.Admin.Reports;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -194,7 +195,8 @@ namespace HRManagementSystem.Views.Admin
 
         private void btnReports_Click(object sender, RoutedEventArgs e)
         {
-
+            var mainAdmin = Window.GetWindow(this) as MainAdmin;
+            mainAdmin?.MainFrameControl.Navigate(new ReportsView());
         }
     }
 }
