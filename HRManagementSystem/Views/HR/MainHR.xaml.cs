@@ -14,7 +14,7 @@ namespace HRManagementSystem.Views.HR
 
         private void MainHR_Loaded(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new HRDashboard());
+            MainFrame.Navigate(new Employee());
         }
     }
 }

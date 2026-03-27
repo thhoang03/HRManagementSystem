@@ -61,8 +61,35 @@ namespace HRManagementSystem.Views.HR
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            FillComboEmployees();
-            FillDgContracts();
+            // clear search and reload employees/contracts
+            try
+            {
+                var selected = cbEmployees.SelectedValue;
+                if (txtSearch != null) txtSearch.Text = string.Empty;
+                FillComboEmployees();
+                if (selected != null) cbEmployees.SelectedValue = selected;
+                FillDgContracts();
+                if (dgContracts != null) dgContracts.SelectedItem = null;
+                Clear();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var keyword = txtSearch.Text.Trim();
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                FillDgContracts();
+                return;
+            }
+
+            // search contracts by employee name, type or status
+            var results = _contBLL.Search(keyword);
+            dgContracts.ItemsSource = results.Where(c => string.IsNullOrWhiteSpace(c.Status) || !c.Status.Equals("Inactive", StringComparison.OrdinalIgnoreCase)).ToList();
         }
 
         private void dgContracts_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -75,6 +102,31 @@ namespace HRManagementSystem.Views.HR
                 dpStartDate.SelectedDate = contract.StartDate.ToDateTime(TimeOnly.MinValue);
                 dpEndDate.SelectedDate = contract.EndDate?.ToDateTime(TimeOnly.MinValue);
                 txtSalary.Text = contract.ContractSalary?.ToString();
+            }
+        }
+
+        private void cbEmployees_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var emp = cbEmployees.SelectedItem as HRManagementSystem.Models.Employee;
+            if (emp == null) return;
+
+            if (!string.IsNullOrWhiteSpace(emp.Status) && emp.Status.Equals("Inactive", StringComparison.OrdinalIgnoreCase))
+            {
+                if (MessageBox.Show($"Nhân viên '{emp.FullName}' hiện Inactive. Bạn có muốn active nhân viên này không?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    emp.Status = "Active";
+                    try
+                    {
+                        _empBLL.Update(emp);
+                        FillComboEmployees();
+                        cbEmployees.SelectedValue = emp.EmployeeId;
+                        MessageBox.Show("Employee activated.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
             }
         }
 
@@ -174,10 +226,20 @@ namespace HRManagementSystem.Views.HR
                 salary = salaryValue;
             }
 
+            string contractType = string.IsNullOrWhiteSpace(txtContractType.Text) ? string.Empty : txtContractType.Text.Trim();
+
+            // Contract type validation: allow letters and common punctuation (letters, digits, spaces, '-', '_')
+            if (string.IsNullOrWhiteSpace(contractType) || !contractType.All(c => char.IsLetterOrDigit(c) || char.IsWhiteSpace(c) || c == '-' || c == '_'))
+            {
+                MessageBox.Show("Contract Type is required and must contain letters, digits, spaces, '-' or '_'.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtContractType.Focus();
+                return false;
+            }
+
             input = new ContractInput
             {
                 EmployeeId = empId,
-                ContractType = string.IsNullOrWhiteSpace(txtContractType.Text) ? null : txtContractType.Text.Trim(),
+                ContractType = contractType,
                 StartDate = startDate,
                 EndDate = endDate,
                 ContractSalary = salary

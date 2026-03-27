@@ -19,7 +19,15 @@ namespace HRManagementSystem.BLL
 
         public List<Employee> Search(string name)
         {
-            return _empDAL.GetAll().Where(e=>e.FullName.ToLower().Contains(name.ToLower())).ToList();
+            if (string.IsNullOrWhiteSpace(name)) return _empDAL.GetAll().ToList();
+
+            string keyword = name.Trim();
+            return _empDAL.GetAll()
+                .Where(e =>
+                    (!string.IsNullOrWhiteSpace(e.FullName) && e.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrWhiteSpace(e.Email) && e.Email.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrWhiteSpace(e.Phone) && e.Phone.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
         }
     }
 }

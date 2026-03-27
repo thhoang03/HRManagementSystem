@@ -28,7 +28,7 @@ namespace HRManagementSystem.Views.HR
         {
             if (Window.GetWindow(this) is MainHR mainHr)
             {
-                mainHr.MainFrame.Navigate(new HRDashboard());
+                mainHr.MainFrame.Navigate(new Employee());
             }
         }
 
