@@ -63,6 +63,7 @@ namespace HRManagementSystem.Views.Admin
             Position p = new();
             p.PositionName = name;
             p.BaseSalary = baseSalary;
+            p.Status = "Active";
 
             _posBLL.Add(p);
             FillDataGridPositons();
@@ -100,13 +101,14 @@ namespace HRManagementSystem.Views.Admin
             }
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        private void btnActive_Click(object sender, RoutedEventArgs e)
         {
-            var pos = dgPositions.SelectedItem as Position;
-            if (pos != null)
-            {
-                MessageBox.Show("Position does not support Status. Delete action is disabled.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            UpdateSelectedStatus("Active");
+        }
+
+        private void btnDeactive_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateSelectedStatus("Deactive");
         }
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -142,6 +144,20 @@ namespace HRManagementSystem.Views.Admin
             }
 
             return true;
+        }
+
+        private void UpdateSelectedStatus(string status)
+        {
+            var pos = dgPositions.SelectedItem as Position;
+            if (pos == null)
+            {
+                MessageBox.Show("Please select a position first.", "Position", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            pos.Status = status;
+            _posBLL.Update(pos);
+            FillDataGridPositons();
         }
     }
 }

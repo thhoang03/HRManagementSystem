@@ -32,6 +32,14 @@ namespace HRManagementSystem.Views.Manager
             }
         }
 
+        private void btnReports_Click(object sender, RoutedEventArgs e)
+        {
+            if (Window.GetWindow(this) is MainManager mainManager)
+            {
+                mainManager.MainFrame.Navigate(new ReportsView());
+            }
+        }
+
         private void btnLogout_Click(object sender, RoutedEventArgs e)
         {
             Application.Current.Properties.Remove("CurrentUser");

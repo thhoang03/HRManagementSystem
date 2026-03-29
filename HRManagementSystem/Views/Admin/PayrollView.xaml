@@ -33,7 +33,8 @@
             <ComboBox x:Name="cbGenMonth"
                       Width="120"
                       Height="34"
-                      Margin="0,0,16,0"/>
+                      Margin="0,0,16,0"
+                      SelectionChanged="cbGenMonth_SelectionChanged"/>
 
             <TextBlock Text="Year"
                        VerticalAlignment="Center"
@@ -43,7 +44,8 @@
             <ComboBox x:Name="cbGenYear"
                       Width="120"
                       Height="34"
-                      Margin="0,0,16,0"/>
+                      Margin="0,0,16,0"
+                      SelectionChanged="cbGenYear_SelectionChanged"/>
 
             <Button Content="Generate"
                     x:Name="btnGenerate"
@@ -55,7 +57,7 @@
                     FontWeight="SemiBold"
                     Click="btnGenerate_Click"/>
 
-            <Button Content="Save Payroll"
+            <Button Content="Save All"
                     x:Name="btnSavePayroll"
                     Width="120"
                     Height="36"
@@ -64,9 +66,10 @@
                     Foreground="White"
                     BorderThickness="0"
                     FontWeight="SemiBold"
+                    Visibility="Collapsed"
                     Click="btnSavePayroll_Click"/>
 
-            <Button Content="Approve"
+            <Button Content="Approve All"
                     x:Name="btnApprove"
                     Width="100"
                     Height="36"
@@ -77,7 +80,7 @@
                     FontWeight="SemiBold"
                     Click="btnApprove_Click"/>
 
-            <Button Content="Pay"
+            <Button Content="Pay All"
                     x:Name="btnPay"
                     Width="90"
                     Height="36"
@@ -187,6 +190,75 @@
                     <DataGridTextColumn Header="Status"
                                         Binding="{Binding Status}"
                                         Width="0.8*"/>
+
+                    <DataGridTemplateColumn Header="Actions" Width="2*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Button Content="Detail"
+                                            Margin="0,0,6,0"
+                                            Padding="10,2"
+                                            Background="#64748B"
+                                            Foreground="White"
+                                            BorderThickness="0"
+                                            Click="btnRowDetail_Click"/>
+                                    <Button Content="Save"
+                                            Margin="0,0,6,0"
+                                            Padding="10,2"
+                                            Background="#22C55E"
+                                            Foreground="White"
+                                            BorderThickness="0"
+                                            Click="btnRowSave_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding PayrollId}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <Button Content="Approve"
+                                            Margin="0,0,6,0"
+                                            Padding="10,2"
+                                            Background="#3B82F6"
+                                            Foreground="White"
+                                            BorderThickness="0"
+                                            Click="btnRowApprove_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Draft">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                    <Button Content="Pay"
+                                            Padding="10,2"
+                                            Background="#0EA5E9"
+                                            Foreground="White"
+                                            BorderThickness="0"
+                                            Click="btnRowPay_Click">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Status}" Value="Approved">
+                                                        <Setter Property="Visibility" Value="Visible"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
 
                 </DataGrid.Columns>
 

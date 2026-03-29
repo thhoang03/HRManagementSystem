@@ -15,6 +15,8 @@ public partial class User
 
     public string? Role { get; set; }
 
+    public string? Status { get; set; }
+
     public DateTime? LastLogin { get; set; }
 
     public virtual Employee? Employee { get; set; }

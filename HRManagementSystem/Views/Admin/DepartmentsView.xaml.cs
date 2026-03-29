@@ -57,6 +57,7 @@ namespace HRManagementSystem.Views.Admin
             Department dept = new Department();
             dept.DepartmentName = name;
             dept.Description = des;
+            dept.Status = "Active";
             _deptBLL.Add(dept);
             FillDataGridDepartments();
             Clear();
@@ -98,14 +99,14 @@ namespace HRManagementSystem.Views.Admin
             }
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        private void btnActive_Click(object sender, RoutedEventArgs e)
         {
-            var dept = dgDepartments.SelectedItem as Department;
-            if (dept != null)
-            {
-                MessageBox.Show("Department does not support Status. Delete action is disabled.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            UpdateSelectedStatus("Active");
+        }
 
+        private void btnDeactive_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateSelectedStatus("Deactive");
         }
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -132,6 +133,20 @@ namespace HRManagementSystem.Views.Admin
             }
 
             return true;
+        }
+
+        private void UpdateSelectedStatus(string status)
+        {
+            var dept = dgDepartments.SelectedItem as Department;
+            if (dept == null)
+            {
+                MessageBox.Show("Please select a department first.", "Department", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            dept.Status = status;
+            _deptBLL.Update(dept);
+            FillDataGridDepartments();
         }
     }
 }

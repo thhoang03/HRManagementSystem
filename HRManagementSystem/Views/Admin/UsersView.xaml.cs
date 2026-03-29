@@ -50,6 +50,7 @@ namespace HRManagementSystem.Views.Admin
             txtUsername.Text = string.Empty;
             pwdPassword.Password = string.Empty;
             txtRole.Text = string.Empty;
+            cbStatus.SelectedIndex = 0;
             txtLastLogin.Text = string.Empty;
         }
 
@@ -73,6 +74,7 @@ namespace HRManagementSystem.Views.Admin
                 cbEmployees.SelectedValue = user.EmployeeId;
                 txtUsername.Text = user.Username;
                 txtRole.Text = user.Role ?? string.Empty;
+                SetStatusSelection(user.Status);
                 txtLastLogin.Text = user.LastLogin?.ToString("g") ?? string.Empty;
                 pwdPassword.Password = string.Empty;
             }
@@ -99,6 +101,7 @@ namespace HRManagementSystem.Views.Admin
             user.Username = username;
             user.PasswordHash = password;
             user.Role = string.IsNullOrWhiteSpace(role) ? null : role;
+            user.Status = GetSelectedStatus();
             user.EmployeeId = employeeId;
 
             _userBLL.Add(user);
@@ -132,6 +135,7 @@ namespace HRManagementSystem.Views.Admin
                     user.PasswordHash = password;
                 }
                 user.Role = string.IsNullOrWhiteSpace(role) ? null : role;
+                user.Status = GetSelectedStatus();
                 user.EmployeeId = employeeId;
 
                 _userBLL.Update(user);
@@ -145,7 +149,34 @@ namespace HRManagementSystem.Views.Admin
             var user = dgUsers.SelectedItem as User;
             if (user != null)
             {
-                MessageBox.Show("User does not support Status. Delete action is disabled.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (MessageBox.Show("Do you really want to deactivate this user?",
+                    "Warning",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                {
+                    user.Status = "Deactive";
+                    _userBLL.Update(user);
+                    FillDataGridUsers();
+                    Clear();
+                }
+            }
+        }
+
+        private void btnActive_Click(object sender, RoutedEventArgs e)
+        {
+            var user = dgUsers.SelectedItem as User;
+            if (user != null)
+            {
+                if (MessageBox.Show("Do you really want to active this user?",
+                    "Confirmation",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    user.Status = "Active";
+                    _userBLL.Update(user);
+                    FillDataGridUsers();
+                    Clear();
+                }
             }
         }
 
@@ -154,6 +185,35 @@ namespace HRManagementSystem.Views.Admin
             string keyword = txtSearch.Text.Trim();
             dgUsers.ItemsSource = null;
             dgUsers.ItemsSource = _userBLL.Search(keyword);
+        }
+
+        private string GetSelectedStatus()
+        {
+            if (cbStatus.SelectedItem is ComboBoxItem item
+                && item.Content is string status
+                && !string.IsNullOrWhiteSpace(status))
+            {
+                return status;
+            }
+
+            return "Active";
+        }
+
+        private void SetStatusSelection(string? status)
+        {
+            string normalized = string.IsNullOrWhiteSpace(status) ? "Active" : status.Trim();
+            foreach (var item in cbStatus.Items)
+            {
+                if (item is ComboBoxItem comboItem
+                    && comboItem.Content is string content
+                    && string.Equals(content, normalized, StringComparison.OrdinalIgnoreCase))
+                {
+                    cbStatus.SelectedItem = comboItem;
+                    return;
+                }
+            }
+
+            cbStatus.SelectedIndex = 0;
         }
     }
 }

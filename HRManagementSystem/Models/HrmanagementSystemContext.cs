@@ -104,6 +104,7 @@ public partial class HrmanagementSystemContext : DbContext
             entity.Property(e => e.DepartmentId).HasColumnName("DepartmentID");
             entity.Property(e => e.DepartmentName).HasMaxLength(100);
             entity.Property(e => e.Description).HasMaxLength(255);
+            entity.Property(e => e.Status).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Employee>(entity =>
@@ -201,6 +202,7 @@ public partial class HrmanagementSystemContext : DbContext
             entity.Property(e => e.PositionId).HasColumnName("PositionID");
             entity.Property(e => e.BaseSalary).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.PositionName).HasMaxLength(100);
+            entity.Property(e => e.Status).HasMaxLength(50);
         });
 
         modelBuilder.Entity<Setting>(entity =>
@@ -215,6 +217,7 @@ public partial class HrmanagementSystemContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false);
             entity.Property(e => e.SettingValue).HasMaxLength(255);
+            entity.Property(e => e.Status).HasMaxLength(50);
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -234,6 +237,7 @@ public partial class HrmanagementSystemContext : DbContext
             entity.Property(e => e.Role)
                 .HasMaxLength(20)
                 .HasDefaultValue("Employee");
+            entity.Property(e => e.Status).HasMaxLength(50);
             entity.Property(e => e.Username)
                 .HasMaxLength(50)
                 .IsUnicode(false);

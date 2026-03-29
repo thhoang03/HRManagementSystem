@@ -88,6 +88,10 @@
                     Content="Leave Approval"
                     Style="{StaticResource SidebarButtonStyle}"
                     Click="btnLeaveApproval_Click"/>
+            <Button x:Name="btnReports"
+                    Content="Reports"
+                    Style="{StaticResource SidebarButtonStyle}"
+                    Click="btnReports_Click"/>
         </StackPanel>
 
         <StackPanel Grid.Row="2" Margin="10,15">

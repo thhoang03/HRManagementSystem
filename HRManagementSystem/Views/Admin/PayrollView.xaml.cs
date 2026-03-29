@@ -84,8 +84,10 @@ namespace HRManagementSystem.Views.Admin
                 data = data.Where(p => p.EmployeeName.Contains(keyword, StringComparison.OrdinalIgnoreCase));
             }
 
+            var visibleRows = data.ToList();
             dgPayroll.ItemsSource = null;
-            dgPayroll.ItemsSource = data.ToList();
+            dgPayroll.ItemsSource = visibleRows;
+            UpdateHeaderActionVisibility(visibleRows);
         }
 
         private void btnGenerate_Click(object sender, RoutedEventArgs e)
@@ -109,40 +111,54 @@ namespace HRManagementSystem.Views.Admin
 
         private void btnSavePayroll_Click(object sender, RoutedEventArgs e)
         {
-            if (!_showingGenerated || _generatedRows.Count == 0)
-            {
-                MessageBox.Show("Please generate payroll first.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
             if (!TryGetSelectedMonthYear(out int month, out int year))
             {
                 MessageBox.Show("Please select month and year.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            if (_payBLL.HasPayrolls(month, year))
+            if (!_showingGenerated || _generatedRows.Count == 0)
             {
-                MessageBox.Show("Payroll for this month already exists.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("No generated preview to save. Please click Generate first.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (MessageBox.Show(
+                $"Do you want to save all payrolls for {month}/{year}?",
+                "Confirm Save All",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            var rowsToSave = _generatedRows
+                .Where(p => !_payBLL.HasPayroll(month, year, p.EmployeeId))
+                .ToList();
+
+            if (rowsToSave.Count == 0)
+            {
+                MessageBox.Show("All payrolls are already saved.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
                 LoadPayrollsFromDb(month, year);
                 return;
             }
 
-            _payBLL.SavePayrolls(_generatedRows);
+            _payBLL.SavePayrolls(rowsToSave);
+            MessageBox.Show($"Save All completed. Saved {rowsToSave.Count} payroll(s).", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
             LoadPayrollsFromDb(month, year);
         }
 
         private void btnApprove_Click(object sender, RoutedEventArgs e)
         {
-            UpdateStatus("Approved");
+            UpdateAllStatus("Approved");
         }
 
         private void btnPay_Click(object sender, RoutedEventArgs e)
         {
-            UpdateStatus("Paid");
+            UpdateAllStatus("Paid");
         }
 
-        private void UpdateStatus(string status)
+        private void UpdateAllStatus(string status)
         {
             if (!TryGetSelectedMonthYear(out int month, out int year))
             {
@@ -150,9 +166,25 @@ namespace HRManagementSystem.Views.Admin
                 return;
             }
 
-            if (_showingGenerated && _generatedRows.Count > 0 && !_payBLL.HasPayrolls(month, year))
+            if (MessageBox.Show(
+                $"Do you want to {status.ToLowerInvariant()} all payrolls for {month}/{year}?",
+                $"Confirm {status} All",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) != MessageBoxResult.Yes)
             {
-                _payBLL.SavePayrolls(_generatedRows);
+                return;
+            }
+
+            if (_showingGenerated && _generatedRows.Count > 0)
+            {
+                var rowsToSave = _generatedRows
+                    .Where(p => !_payBLL.HasPayroll(month, year, p.EmployeeId))
+                    .ToList();
+
+                if (rowsToSave.Count > 0)
+                {
+                    _payBLL.SavePayrolls(rowsToSave);
+                }
             }
 
             if (!_payBLL.HasPayrolls(month, year))
@@ -161,8 +193,120 @@ namespace HRManagementSystem.Views.Admin
                 return;
             }
 
-            _payBLL.UpdateStatus(month, year, status);
+            if (status.Equals("Approved", StringComparison.OrdinalIgnoreCase)
+                && !_currentRows.Any(p => IsStatus(p.Status, "Draft")))
+            {
+                MessageBox.Show("No Draft payroll available to approve.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (status.Equals("Paid", StringComparison.OrdinalIgnoreCase)
+                && !_currentRows.Any(p => IsStatus(p.Status, "Approved")))
+            {
+                MessageBox.Show("No Approved payroll available to pay.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            int affectedAll = status.Equals("Approved", StringComparison.OrdinalIgnoreCase)
+                ? _payBLL.UpdateStatus(month, year, "Draft", "Approved")
+                : _payBLL.UpdateStatus(month, year, "Approved", "Paid");
+            MessageBox.Show($"{status} All completed. Updated {affectedAll} payroll(s).", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
             LoadPayrollsFromDb(month, year);
+        }
+
+        private void btnRowSave_Click(object sender, RoutedEventArgs e)
+        {
+            if (!TryGetRowPayroll(sender, out PayrollPreview payroll))
+            {
+                MessageBox.Show("Cannot identify selected payroll row.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (MessageBox.Show(
+                $"Do you want to save payroll for {payroll.EmployeeName} ({payroll.Month}/{payroll.Year})?",
+                "Confirm Save",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            if (_payBLL.HasPayroll(payroll.Month, payroll.Year, payroll.EmployeeId))
+            {
+                MessageBox.Show("This payroll is already saved.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                LoadPayrollsFromDb(payroll.Month, payroll.Year);
+                return;
+            }
+
+            _payBLL.SavePayrolls(new[] { payroll });
+            MessageBox.Show($"Saved payroll for {payroll.EmployeeName}.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+            LoadPayrollsFromDb(payroll.Month, payroll.Year);
+        }
+
+        private void btnRowDetail_Click(object sender, RoutedEventArgs e)
+        {
+            if (!TryGetRowPayroll(sender, out PayrollPreview payroll))
+            {
+                MessageBox.Show("Cannot identify selected payroll row.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            NavigationService?.Navigate(new PayrollDetailView(payroll));
+        }
+
+        private void btnRowApprove_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateSingleStatus(sender, "Approved");
+        }
+
+        private void btnRowPay_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateSingleStatus(sender, "Paid");
+        }
+
+        private void UpdateSingleStatus(object sender, string status)
+        {
+            if (!TryGetRowPayroll(sender, out PayrollPreview payroll))
+            {
+                MessageBox.Show("Cannot identify selected payroll row.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (MessageBox.Show(
+                $"Do you want to {status.ToLowerInvariant()} payroll for {payroll.EmployeeName} ({payroll.Month}/{payroll.Year})?",
+                $"Confirm {status}",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            if (status.Equals("Approved", StringComparison.OrdinalIgnoreCase) && !IsStatus(payroll.Status, "Draft"))
+            {
+                MessageBox.Show("Only payroll with Draft status can be approved.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (status.Equals("Paid", StringComparison.OrdinalIgnoreCase) && !IsStatus(payroll.Status, "Approved"))
+            {
+                MessageBox.Show("Only payroll with Approved status can be paid.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (!_payBLL.HasPayroll(payroll.Month, payroll.Year, payroll.EmployeeId))
+            {
+                _payBLL.SavePayrolls(new[] { payroll });
+            }
+
+            int affected = _payBLL.UpdateStatus(payroll.Month, payroll.Year, payroll.EmployeeId, status);
+            if (affected == 0)
+            {
+                MessageBox.Show("No saved payroll found for selected row.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            MessageBox.Show($"{status} successful for {payroll.EmployeeName}.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
+            LoadPayrollsFromDb(payroll.Month, payroll.Year);
         }
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -170,10 +314,67 @@ namespace HRManagementSystem.Views.Admin
             ApplySearch();
         }
 
+        private void cbGenMonth_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ReloadBySelectedPeriod();
+        }
+
+        private void cbGenYear_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ReloadBySelectedPeriod();
+        }
+
         private void btnClearSearch_Click(object sender, RoutedEventArgs e)
         {
             txtSearch.Text = string.Empty;
             ApplySearch();
+        }
+
+        private void ReloadBySelectedPeriod()
+        {
+            if (!IsLoaded)
+            {
+                return;
+            }
+
+            if (!TryGetSelectedMonthYear(out int month, out int year))
+            {
+                return;
+            }
+
+            LoadPayrollsFromDb(month, year);
+        }
+
+        private bool TryGetRowPayroll(object sender, out PayrollPreview payroll)
+        {
+            payroll = null!;
+            if (sender is Button button && button.DataContext is PayrollPreview row)
+            {
+                payroll = row;
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsStatus(string? current, string expected)
+        {
+            return string.Equals(current?.Trim(), expected, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private void UpdateHeaderActionVisibility(List<PayrollPreview> visibleRows)
+        {
+            btnSavePayroll.Visibility = _showingGenerated && _generatedRows.Count > 0
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            btnApprove.Visibility = visibleRows.Any(p => IsStatus(p.Status, "Draft"))
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+
+            btnPay.Visibility = visibleRows.Any(p => IsStatus(p.Status, "Approved"))
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         private bool TryGetSelectedMonthYear(out int month, out int year)
@@ -210,5 +411,6 @@ namespace HRManagementSystem.Views.Admin
                 Name = name;
             }
         }
+
     }
 }
