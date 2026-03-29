@@ -100,13 +100,11 @@ namespace HRManagementSystem.Views.Admin
             {
                 MessageBox.Show("Payroll for this month already exists. Loading saved payrolls.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
                 LoadPayrollsFromDb(month, year);
-                ClearDetail();
                 return;
             }
 
             var previews = _payBLL.GeneratePreview(month, year);
             ShowGenerated(previews);
-            ClearDetail();
         }
 
         private void btnSavePayroll_Click(object sender, RoutedEventArgs e)
@@ -127,13 +125,11 @@ namespace HRManagementSystem.Views.Admin
             {
                 MessageBox.Show("Payroll for this month already exists.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Warning);
                 LoadPayrollsFromDb(month, year);
-                ClearDetail();
                 return;
             }
 
             _payBLL.SavePayrolls(_generatedRows);
             LoadPayrollsFromDb(month, year);
-            ClearDetail();
         }
 
         private void btnApprove_Click(object sender, RoutedEventArgs e)
@@ -154,6 +150,11 @@ namespace HRManagementSystem.Views.Admin
                 return;
             }
 
+            if (_showingGenerated && _generatedRows.Count > 0 && !_payBLL.HasPayrolls(month, year))
+            {
+                _payBLL.SavePayrolls(_generatedRows);
+            }
+
             if (!_payBLL.HasPayrolls(month, year))
             {
                 MessageBox.Show("No payrolls found for this month.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -162,7 +163,6 @@ namespace HRManagementSystem.Views.Admin
 
             _payBLL.UpdateStatus(month, year, status);
             LoadPayrollsFromDb(month, year);
-            ClearDetail();
         }
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -174,76 +174,6 @@ namespace HRManagementSystem.Views.Admin
         {
             txtSearch.Text = string.Empty;
             ApplySearch();
-        }
-
-        private void dgPayroll_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (dgPayroll.SelectedItem is PayrollPreview payroll)
-            {
-                FillDetail(payroll);
-            }
-        }
-
-        private void FillDetail(PayrollPreview payroll)
-        {
-            txtEmployee.Text = payroll.EmployeeName;
-            txtContract.Text = payroll.ContractType ?? string.Empty;
-            txtMonth.Text = payroll.Month.ToString();
-            txtYear.Text = payroll.Year.ToString();
-            txtBaseSalary.Text = payroll.BaseSalary.ToString("N2");
-            txtWorkDays.Text = payroll.WorkDays.ToString();
-            txtLeaveDays.Text = payroll.LeaveDays.ToString();
-            txtBonus.Text = payroll.Bonus.ToString("N2");
-            txtOvertime.Text = payroll.OvertimePay.ToString("N2");
-            txtDeduction.Text = payroll.Deduction.ToString("N2");
-            txtNetSalary.Text = payroll.NetSalary.ToString("N2");
-        }
-
-        private void ClearDetail()
-        {
-            txtEmployee.Text = string.Empty;
-            txtContract.Text = string.Empty;
-            txtMonth.Text = string.Empty;
-            txtYear.Text = string.Empty;
-            txtBaseSalary.Text = string.Empty;
-            txtWorkDays.Text = string.Empty;
-            txtLeaveDays.Text = string.Empty;
-            txtBonus.Text = string.Empty;
-            txtOvertime.Text = string.Empty;
-            txtDeduction.Text = string.Empty;
-            txtNetSalary.Text = string.Empty;
-        }
-
-        private void DetailSalary_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            decimal baseSalary = GetDecimalOrZero(txtBaseSalary.Text);
-            decimal bonus = GetDecimalOrZero(txtBonus.Text);
-            decimal overtime = GetDecimalOrZero(txtOvertime.Text);
-            decimal deduction = GetDecimalOrZero(txtDeduction.Text);
-
-            decimal net = baseSalary + bonus + overtime - deduction;
-            txtNetSalary.Text = net.ToString("N2");
-        }
-
-        private void btnUpdateRow_Click(object sender, RoutedEventArgs e)
-        {
-            if (!_showingGenerated)
-            {
-                MessageBox.Show("You can only edit bonus/overtime in preview mode.", "Payroll", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
-
-            if (dgPayroll.SelectedItem is not PayrollPreview payroll)
-            {
-                return;
-            }
-
-            payroll.Bonus = GetDecimalOrZero(txtBonus.Text);
-            payroll.OvertimePay = GetDecimalOrZero(txtOvertime.Text);
-            payroll.Deduction = GetDecimalOrZero(txtDeduction.Text);
-            payroll.NetSalary = GetDecimalOrZero(txtNetSalary.Text);
-
-            dgPayroll.Items.Refresh();
         }
 
         private bool TryGetSelectedMonthYear(out int month, out int year)
@@ -267,16 +197,6 @@ namespace HRManagementSystem.Views.Admin
             }
 
             return true;
-        }
-
-        private static decimal GetDecimalOrZero(string text)
-        {
-            if (decimal.TryParse(text.Trim(), out decimal value))
-            {
-                return value;
-            }
-
-            return 0m;
         }
 
         private sealed class MonthItem

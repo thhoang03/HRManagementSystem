@@ -7,6 +7,7 @@
         mc:Ignorable="d"
         Title="MainAdmin" Height="700" Width="1300" WindowStartupLocation="CenterScreen" WindowState="Maximized"
         Loaded="MainAdmin_Loaded">
+    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -14,7 +15,7 @@
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0">
-            <local:Sidebar/>
+            <local:Sidebar Loaded="Sidebar_Loaded"/>
         </Grid>
 
         <Grid Grid.Column="1" Background="#F8FAFC">

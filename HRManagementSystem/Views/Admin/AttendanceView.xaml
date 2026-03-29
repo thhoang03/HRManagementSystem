@@ -17,28 +17,13 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- HEADER -->
-
         <TextBlock Text="Attendance Management"
                    Grid.Row="0"
                    FontSize="24"
                    FontWeight="Bold"
                    Foreground="#0F172A"/>
 
-
-        <!-- ACTION BAR -->
-
         <StackPanel Grid.Row="1" Margin="0,16,0,10" Orientation="Horizontal">
-
-            <Button Content="+ New"
-                    x:Name="btnNew"
-                    Width="100"
-                    Height="36"
-                    Margin="0,0,8,0"
-                    Background="#F9D678"
-                    BorderThickness="0"
-                    FontWeight="SemiBold"
-                    Click="btnNew_Click"/>
 
             <TextBox x:Name="txtSearch"
                      Width="220"
@@ -58,9 +43,6 @@
                     FontWeight="SemiBold"/>
 
         </StackPanel>
-
-
-        <!-- FILTERS -->
 
         <Border Grid.Row="2"
                 Background="White"
@@ -126,176 +108,58 @@
 
         </Border>
 
+        <Border Grid.Row="3"
+                Background="White"
+                CornerRadius="12"
+                Padding="16">
 
-        <!-- CONTENT -->
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
+            </Border.Effect>
 
-        <Grid Grid.Row="3">
+            <DataGrid x:Name="dgAttendance"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      RowHeight="36"
+                      GridLinesVisibility="None"
+                      HeadersVisibility="Column"
+                      BorderThickness="0">
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
+                <DataGrid.Columns>
 
-            <!-- ATTENDANCE LIST -->
+                    <DataGridTextColumn Header="ID"
+                                        Binding="{Binding AttendanceId}"
+                                        Width="0.5*"/>
 
-            <Border Grid.Column="0"
-                    Background="White"
-                    CornerRadius="12"
-                    Padding="16"
-                    Margin="0,0,16,0">
+                    <DataGridTextColumn Header="Employee"
+                                        Binding="{Binding Employee.FullName}"
+                                        Width="1.5*"/>
 
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
-                </Border.Effect>
+                    <DataGridTextColumn Header="Date"
+                                        Binding="{Binding AttendanceDate}"
+                                        Width="*"/>
 
-                <DataGrid x:Name="dgAttendance"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          RowHeight="36"
-                          GridLinesVisibility="None"
-                          HeadersVisibility="Column"
-                          SelectionChanged="dgAttendance_SelectionChanged"
-                          BorderThickness="0">
+                    <DataGridTextColumn Header="Check In"
+                                        Binding="{Binding CheckIn,StringFormat=g}"
+                                        Width="1*"/>
 
-                    <DataGrid.Columns>
+                    <DataGridTextColumn Header="Check Out"
+                                        Binding="{Binding CheckOut,StringFormat=g}"
+                                        Width="1*"/>
 
-                        <DataGridTextColumn Header="ID"
-                                            Binding="{Binding AttendanceId}"
-                                            Width="0.5*"/>
+                    <DataGridTextColumn Header="Status"
+                                        Binding="{Binding Status}"
+                                        Width="0.5*"/>
 
-                        <DataGridTextColumn Header="Employee"
-                                            Binding="{Binding Employee.FullName}"
-                                            Width="1.5*"/>
+                    <DataGridTextColumn Header="Device IP"
+                                        Binding="{Binding DeviceIp}"
+                                        Width="1*"/>
 
-                        <DataGridTextColumn Header="Date"
-                                            Binding="{Binding AttendanceDate}"
-                                            Width="*"/>
+                </DataGrid.Columns>
 
-                        <DataGridTextColumn Header="Check In"
-                                            Binding="{Binding CheckIn,StringFormat=g}"
-                                            Width="1*"/>
+            </DataGrid>
 
-                        <DataGridTextColumn Header="Check Out"
-                                            Binding="{Binding CheckOut,StringFormat=g}"
-                                            Width="1*"/>
-
-                        <DataGridTextColumn Header="Status"
-                                            Binding="{Binding Status}"
-                                            Width="0.5*"/>
-
-                        <DataGridTextColumn Header="Device IP"
-                                            Binding="{Binding DeviceIp}"
-                                            Width="1*"/>
-
-                    </DataGrid.Columns>
-
-                </DataGrid>
-
-            </Border>
-
-
-            <!-- DETAIL FORM -->
-
-            <Border Grid.Column="1"
-                    Background="White"
-                    CornerRadius="12"
-                    Padding="20">
-
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
-                </Border.Effect>
-
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-
-                    <StackPanel>
-
-                        <TextBlock Text="Attendance Detail"
-                                   FontSize="20"
-                                   FontWeight="Bold"
-                                   Margin="0,0,0,20"/>
-
-
-                        <TextBlock Text="Employee"/>
-                        <ComboBox x:Name="cbEmployees"
-                                  Margin="0,6,0,12"
-                                  Height="34"/>
-
-
-                        <TextBlock Text="Attendance Date"/>
-                        <DatePicker x:Name="dpAttendanceDate"
-                                    Margin="0,6,0,12"
-                                    Height="34"/>
-
-
-                        <TextBlock Text="Check In"/>
-                        <TextBox x:Name="txtCheckIn"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"/>
-
-
-                        <TextBlock Text="Check Out"/>
-                        <TextBox x:Name="txtCheckOut"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"/>
-
-
-                        <TextBlock Text="Status"/>
-                        <ComboBox x:Name="cbStatus"
-                                  Margin="0,6,0,12"
-                                  Height="34">
-                            <ComboBoxItem Content="Present"/>
-                            <ComboBoxItem Content="Absent"/>
-                            <ComboBoxItem Content="Late"/>
-                            <ComboBoxItem Content="Leave"/>
-                        </ComboBox>
-
-
-                        <TextBlock Text="Device IP"/>
-                        <TextBox x:Name="txtDeviceIp"
-                                 Height="34"
-                                 Margin="0,6,0,20"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"/>
-
-
-                        <!-- ACTION BUTTONS -->
-
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right">
-
-                            <Button Content="Add"
-                                    x:Name="btnAdd"
-                                    Width="100"
-                                    Height="36"
-                                    Margin="0,0,8,0"
-                                    Background="#22C55E"
-                                    Foreground="White"
-                                    BorderThickness="0"
-                                    FontWeight="SemiBold"
-                                    Click="btnAdd_Click"/>
-
-                            <Button Content="Update"
-                                    x:Name="btnUpdate"
-                                    Width="100"
-                                    Height="36"
-                                    Background="#F9D678"
-                                    BorderThickness="0"
-                                    FontWeight="SemiBold"
-                                    Click="btnUpdate_Click"/>
-
-                        </StackPanel>
-
-                    </StackPanel>
-
-                </ScrollViewer>
-
-            </Border>
-
-        </Grid>
+        </Border>
 
     </Grid>
 

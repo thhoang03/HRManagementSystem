@@ -249,7 +249,7 @@
                                         x:Name="btnReports"
                                         Content="Reports"
                                         Tag="Reports"
-                                        Style="{StaticResource SidebarButtonStyle}"/>
+                                        Style="{StaticResource SidebarButtonStyle}" Click="btnReports_Click"/>
 
                         </Grid>
 

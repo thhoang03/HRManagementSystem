@@ -1,0 +1,49 @@
+﻿<Page x:Class="HRManagementSystem.Views.Admin.ReportsView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:reports="clr-namespace:HRManagementSystem.Views.Admin.Reports"
+      Background="#F8FAFC">
+
+    <Grid>
+        <TabControl x:Name="tabReports"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    Margin="0">
+
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="FontSize" Value="14"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                    <Setter Property="Padding" Value="20,10"/>
+                    <Setter Property="Foreground" Value="#64748B"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Cursor" Value="Hand"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Foreground" Value="#0F172A"/>
+                            <Setter Property="Background" Value="White"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </TabControl.Resources>
+
+            <TabItem Header="📅  Attendance">
+                <Frame x:Name="frameAttendance" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+
+            <TabItem Header="🌴  Leave">
+                <Frame x:Name="frameLeave" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+
+            <TabItem Header="💰  Payroll">
+                <Frame x:Name="framePayroll" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+
+            <TabItem Header="📄  Contract">
+                <Frame x:Name="frameContract" NavigationUIVisibility="Hidden"/>
+            </TabItem>
+
+        </TabControl>
+    </Grid>
+</Page>
