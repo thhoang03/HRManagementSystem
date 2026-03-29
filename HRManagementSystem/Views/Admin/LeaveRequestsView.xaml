@@ -16,8 +16,6 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- HEADER -->
-
         <TextBlock Text="Leave Requests Management"
                    Grid.Row="0"
                    FontSize="24"
@@ -26,15 +24,6 @@
                    Foreground="#0F172A"/>
 
         <StackPanel Grid.Row="1" Margin="0,16,0,16" Orientation="Horizontal">
-
-            <Button x:Name="btnNew"
-                    Content="＋ New"
-                    Width="100"
-                    Height="36"
-                    Margin="0,0,8,0"
-                    Background="#F9D678"
-                    FontWeight="SemiBold"
-                    Click="btnNew_Click"/>
 
             <TextBox x:Name="txtSearch"
                      Width="220"
@@ -52,188 +41,57 @@
 
         </StackPanel>
 
-        <!-- CONTENT -->
+        <Border Grid.Row="2"
+                Background="White"
+                CornerRadius="12"
+                Padding="16">
 
-        <Grid Grid.Row="2">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="12" Opacity="0.15"/>
+            </Border.Effect>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="dgLeaveRequests"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      RowHeight="34"
+                      HeadersVisibility="Column"
+                      GridLinesVisibility="None">
 
-            <!-- DATA GRID CARD -->
+                <DataGrid.Columns>
 
-            <Border Grid.Column="0"
-                    Background="White"
-                    CornerRadius="12"
-                    Padding="16"
-                    Margin="0,0,16,0">
+                    <DataGridTextColumn Header="ID"
+                                        Binding="{Binding LeaveId}"
+                                        Width="1*"/>
 
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="12" Opacity="0.15"/>
-                </Border.Effect>
+                    <DataGridTextColumn Header="Employee"
+                                        Binding="{Binding Employee.FullName}"
+                                        Width="2*"/>
 
-                <DataGrid x:Name="dgLeaveRequests"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          RowHeight="34"
-                          HeadersVisibility="Column"
-                          GridLinesVisibility="None"
-                          SelectionChanged="dgLeaveRequests_SelectionChanged">
+                    <DataGridTextColumn Header="Start Date"
+                                        Binding="{Binding StartDate}"
+                                        Width="1*"/>
 
-                    <DataGrid.Columns>
+                    <DataGridTextColumn Header="End Date"
+                                        Binding="{Binding EndDate}"
+                                        Width="*"/>
 
-                        <DataGridTextColumn Header="ID"
-                                            Binding="{Binding LeaveId}"
-                                            Width="1*"/>
+                    <DataGridTextColumn Header="Type"
+                                        Binding="{Binding LeaveType}"
+                                        Width="1*"/>
 
-                        <DataGridTextColumn Header="Employee"
-                                            Binding="{Binding Employee.FullName}"
-                                            Width="2*"/>
+                    <DataGridTextColumn Header="Status"
+                                        Binding="{Binding Status}"
+                                        Width="*"/>
 
-                        <DataGridTextColumn Header="Start Date"
-                                            Binding="{Binding StartDate}"
-                                            Width="1*"/>
+                    <DataGridTextColumn Header="Approved By"
+                                        Binding="{Binding ApprovedByNavigation.FullName}"
+                                        Width="2*"/>
 
-                        <DataGridTextColumn Header="End Date"
-                                            Binding="{Binding EndDate}"
-                                            Width="*"/>
+                </DataGrid.Columns>
 
-                        <DataGridTextColumn Header="Type"
-                                            Binding="{Binding LeaveType}"
-                                            Width="1*"/>
+            </DataGrid>
 
-                        <DataGridTextColumn Header="Status"
-                                            Binding="{Binding Status}"
-                                            Width="*"/>
-
-                        <DataGridTextColumn Header="Approved By"
-                                            Binding="{Binding ApprovedByNavigation.FullName}"
-                                            Width="2*"/>
-
-                    </DataGrid.Columns>
-
-                </DataGrid>
-
-            </Border>
-
-            <!-- DETAIL FORM -->
-
-            <Border Grid.Column="1"
-                    Background="White"
-                    CornerRadius="12"
-                    Padding="20">
-
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="12" Opacity="0.15"/>
-                </Border.Effect>
-
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-
-                    <StackPanel>
-
-                        <TextBlock Text="Leave Request Detail"
-                                   FontSize="20"
-                                   FontWeight="Bold"
-                                   Margin="0,0,0,20"/>
-
-                        <!-- EMPLOYEE -->
-
-                        <TextBlock Text="Employee"
-                                   FontWeight="SemiBold"/>
-
-                        <ComboBox x:Name="cbEmployees"
-                                  Margin="0,6,0,12"/>
-
-                        <!-- START DATE -->
-
-                        <TextBlock Text="Start Date"
-                                   FontWeight="SemiBold"/>
-
-                        <DatePicker x:Name="dpStartDate"
-                                    Margin="0,6,0,12"/>
-
-                        <!-- END DATE -->
-
-                        <TextBlock Text="End Date"
-                                   FontWeight="SemiBold"/>
-
-                        <DatePicker x:Name="dpEndDate"
-                                    Margin="0,6,0,12"/>
-
-                        <!-- LEAVE TYPE -->
-
-                        <TextBlock Text="Leave Type"
-                                   FontWeight="SemiBold"/>
-
-                        <TextBox x:Name="txtLeaveType"
-                                 Height="36"
-                                 Padding="8"
-                                 Margin="0,6,0,12"/>
-
-                        <!-- REASON -->
-
-                        <TextBlock Text="Reason"
-                                   FontWeight="SemiBold"/>
-
-                        <TextBox x:Name="txtReason"
-                                 Height="70"
-                                 Padding="8"
-                                 TextWrapping="Wrap"
-                                 AcceptsReturn="True"
-                                 Margin="0,6,0,12"/>
-
-                        <!-- STATUS -->
-
-                        <TextBlock Text="Status"
-                                   FontWeight="SemiBold"/>
-
-                        <ComboBox x:Name="cbStatus"
-                                  Margin="0,6,0,12">
-                            <ComboBoxItem Content="Pending"/>
-                            <ComboBoxItem Content="Approved"/>
-                            <ComboBoxItem Content="Rejected"/>
-                        </ComboBox>
-
-                        <!-- APPROVED BY -->
-
-                        <TextBlock Text="Approved By"
-                                   FontWeight="SemiBold"/>
-
-                        <ComboBox x:Name="cbApprovedBy"
-                                  Margin="0,6,0,20"/>
-
-                        <!-- BUTTONS -->
-
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right">
-
-                            <Button x:Name="btnAdd"
-                                    Content="Add"
-                                    Width="100"
-                                    Height="36"
-                                    Margin="0,0,8,0"
-                                    Background="#F9D678"
-                                    FontWeight="SemiBold"
-                                    Click="btnAdd_Click"/>
-
-                            <Button x:Name="btnUpdate"
-                                    Content="Update"
-                                    Width="100"
-                                    Height="36"
-                                    Background="#3B82F6"
-                                    FontWeight="SemiBold"
-                                    Click="btnUpdate_Click"/>
-
-                        </StackPanel>
-
-                    </StackPanel>
-
-                </ScrollViewer>
-
-            </Border>
-
-        </Grid>
+        </Border>
 
     </Grid>
 

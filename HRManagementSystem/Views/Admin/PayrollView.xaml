@@ -17,15 +17,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- HEADER -->
-
         <TextBlock Text="Payroll Management"
                    Grid.Row="0"
                    FontSize="24"
                    FontWeight="Bold"
                    Foreground="#0F172A"/>
-
-        <!-- ACTION BAR -->
 
         <StackPanel Grid.Row="1" Margin="0,16,0,10" Orientation="Horizontal" VerticalAlignment="Center">
 
@@ -99,8 +95,6 @@
 
         </StackPanel>
 
-        <!-- SEARCH -->
-
         <StackPanel Grid.Row="2" Margin="0,0,0,16" Orientation="Horizontal">
 
             <TextBox x:Name="txtSearch"
@@ -123,226 +117,82 @@
 
         </StackPanel>
 
-        <!-- CONTENT -->
+        <Border Grid.Row="3"
+                Background="White"
+                CornerRadius="12"
+                Padding="16">
 
-        <Grid Grid.Row="3">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
+            </Border.Effect>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="1*"/>
-            </Grid.ColumnDefinitions>
+            <DataGrid x:Name="dgPayroll"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      RowHeight="36"
+                      GridLinesVisibility="None"
+                      HeadersVisibility="Column"
+                      BorderThickness="0">
 
-            <!-- PAYROLL LIST -->
+                <DataGrid.Columns>
 
-            <Border Grid.Column="0"
-                    Background="White"
-                    CornerRadius="12"
-                    Padding="16"
-                    Margin="0,0,16,0">
+                    <DataGridTextColumn Header="ID"
+                                        Binding="{Binding PayrollId}"
+                                        Width="0.5*"/>
 
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
-                </Border.Effect>
+                    <DataGridTextColumn Header="Employee"
+                                        Binding="{Binding EmployeeName}"
+                                        Width="1.6*"/>
 
-                <DataGrid x:Name="dgPayroll"
-                          AutoGenerateColumns="False"
-                          IsReadOnly="True"
-                          RowHeight="36"
-                          GridLinesVisibility="None"
-                          HeadersVisibility="Column"
-                          SelectionChanged="dgPayroll_SelectionChanged"
-                          BorderThickness="0">
+                    <DataGridTextColumn Header="Contract"
+                                        Binding="{Binding ContractType}"
+                                        Width="1*"/>
 
-                    <DataGrid.Columns>
+                    <DataGridTextColumn Header="Month"
+                                        Binding="{Binding Month}"
+                                        Width="0.6*"/>
 
-                        <DataGridTextColumn Header="ID"
-                                            Binding="{Binding PayrollId}"
-                                            Width="0.5*"/>
+                    <DataGridTextColumn Header="Year"
+                                        Binding="{Binding Year}"
+                                        Width="0.6*"/>
 
-                        <DataGridTextColumn Header="Employee"
-                                            Binding="{Binding EmployeeName}"
-                                            Width="1.6*"/>
+                    <DataGridTextColumn Header="Base"
+                                        Binding="{Binding BaseSalary,StringFormat=N2}"
+                                        Width="1*"/>
 
-                        <DataGridTextColumn Header="Contract"
-                                            Binding="{Binding ContractType}"
-                                            Width="1*"/>
+                    <DataGridTextColumn Header="Work"
+                                        Binding="{Binding WorkDays}"
+                                        Width="0.7*"/>
 
-                        <DataGridTextColumn Header="Month"
-                                            Binding="{Binding Month}"
-                                            Width="0.6*"/>
+                    <DataGridTextColumn Header="Leave"
+                                        Binding="{Binding LeaveDays}"
+                                        Width="0.7*"/>
 
-                        <DataGridTextColumn Header="Year"
-                                            Binding="{Binding Year}"
-                                            Width="0.6*"/>
+                    <DataGridTextColumn Header="Bonus"
+                                        Binding="{Binding Bonus,StringFormat=N2}"
+                                        Width="0.9*"/>
 
-                        <DataGridTextColumn Header="Base"
-                                            Binding="{Binding BaseSalary,StringFormat=N2}"
-                                            Width="1*"/>
+                    <DataGridTextColumn Header="Overtime"
+                                        Binding="{Binding OvertimePay,StringFormat=N2}"
+                                        Width="0.9*"/>
 
-                        <DataGridTextColumn Header="Work"
-                                            Binding="{Binding WorkDays}"
-                                            Width="0.7*"/>
+                    <DataGridTextColumn Header="Deduction"
+                                        Binding="{Binding Deduction,StringFormat=N2}"
+                                        Width="0.9*"/>
 
-                        <DataGridTextColumn Header="Leave"
-                                            Binding="{Binding LeaveDays}"
-                                            Width="0.7*"/>
+                    <DataGridTextColumn Header="Net"
+                                        Binding="{Binding NetSalary,StringFormat=N2}"
+                                        Width="1*"/>
 
-                        <DataGridTextColumn Header="Bonus"
-                                            Binding="{Binding Bonus,StringFormat=N2}"
-                                            Width="0.9*"/>
+                    <DataGridTextColumn Header="Status"
+                                        Binding="{Binding Status}"
+                                        Width="0.8*"/>
 
-                        <DataGridTextColumn Header="Overtime"
-                                            Binding="{Binding OvertimePay,StringFormat=N2}"
-                                            Width="0.9*"/>
+                </DataGrid.Columns>
 
-                        <DataGridTextColumn Header="Deduction"
-                                            Binding="{Binding Deduction,StringFormat=N2}"
-                                            Width="0.9*"/>
+            </DataGrid>
 
-                        <DataGridTextColumn Header="Net"
-                                            Binding="{Binding NetSalary,StringFormat=N2}"
-                                            Width="1*"/>
-
-                        <DataGridTextColumn Header="Status"
-                                            Binding="{Binding Status}"
-                                            Width="0.8*"/>
-
-                    </DataGrid.Columns>
-
-                </DataGrid>
-
-            </Border>
-
-            <!-- DETAIL FORM -->
-
-            <Border Grid.Column="1"
-                    Background="White"
-                    CornerRadius="12"
-                    Padding="20">
-
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
-                </Border.Effect>
-
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-
-                    <StackPanel>
-
-                        <TextBlock Text="Payroll Detail"
-                                   FontSize="20"
-                                   FontWeight="Bold"
-                                   Margin="0,0,0,20"/>
-
-                        <TextBlock Text="Employee"/>
-                        <TextBox x:Name="txtEmployee"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 IsReadOnly="True"/>
-
-                        <TextBlock Text="Contract"/>
-                        <TextBox x:Name="txtContract"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 IsReadOnly="True"/>
-
-                        <TextBlock Text="Month"/>
-                        <TextBox x:Name="txtMonth"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 IsReadOnly="True"/>
-
-                        <TextBlock Text="Year"/>
-                        <TextBox x:Name="txtYear"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 IsReadOnly="True"/>
-
-                        <TextBlock Text="Base Salary"/>
-                        <TextBox x:Name="txtBaseSalary"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 IsReadOnly="True"/>
-
-                        <TextBlock Text="Work Days"/>
-                        <TextBox x:Name="txtWorkDays"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 IsReadOnly="True"/>
-
-                        <TextBlock Text="Leave Days"/>
-                        <TextBox x:Name="txtLeaveDays"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 IsReadOnly="True"/>
-
-                        <TextBlock Text="Bonus"/>
-                        <TextBox x:Name="txtBonus"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 TextChanged="DetailSalary_TextChanged"/>
-
-                        <TextBlock Text="Overtime Pay"/>
-                        <TextBox x:Name="txtOvertime"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 TextChanged="DetailSalary_TextChanged"/>
-
-                        <TextBlock Text="Deduction"/>
-                        <TextBox x:Name="txtDeduction"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 IsReadOnly="True"/>
-
-                        <TextBlock Text="Net Salary"/>
-                        <TextBox x:Name="txtNetSalary"
-                                 Height="34"
-                                 Margin="0,6,0,20"
-                                 Padding="8"
-                                 BorderBrush="#CBD5E1"
-                                 Background="#F1F5F9"
-                                 IsReadOnly="True"/>
-
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right">
-
-                            <Button Content="Update Row"
-                                    x:Name="btnUpdateRow"
-                                    Width="120"
-                                    Height="36"
-                                    Background="#F9D678"
-                                    BorderThickness="0"
-                                    FontWeight="SemiBold"
-                                    Click="btnUpdateRow_Click"/>
-
-                        </StackPanel>
-
-                    </StackPanel>
-
-                </ScrollViewer>
-
-            </Border>
-
-        </Grid>
+        </Border>
 
     </Grid>
 
