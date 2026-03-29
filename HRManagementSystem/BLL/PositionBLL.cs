@@ -24,7 +24,8 @@ namespace HRManagementSystem.BLL
                 return _posDAL.GetAll();
             }
             return _posDAL.GetAll()
-                          .Where(p => p.PositionName.ToLower().Contains(name.ToLower()))
+                          .Where(p => p.PositionName.Contains(name, StringComparison.OrdinalIgnoreCase)
+                                   || (!string.IsNullOrEmpty(p.Status) && p.Status.Contains(name, StringComparison.OrdinalIgnoreCase)))
                           .ToList();
         }
     }

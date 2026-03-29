@@ -23,26 +23,67 @@ namespace HRManagementSystem.Views.Manager
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             _currentUser = Application.Current.Properties["CurrentUser"] as User;
-            RefreshData();
+            LoadFilterOptions();
+            ApplyFilters();
         }
 
-        private void RefreshData()
+        private void LoadFilterOptions()
+        {
+            cbStatus.ItemsSource = new[] { "Pending", "Approved", "Rejected", "All" };
+            cbStatus.SelectedItem = "Pending";
+
+            var leaveTypes = _leaveRequestBLL.GetAll()
+                .Where(l => !string.IsNullOrWhiteSpace(l.LeaveType))
+                .Select(l => l.LeaveType!.Trim())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(t => t)
+                .ToList();
+
+            leaveTypes.Insert(0, "All");
+            cbLeaveType.ItemsSource = leaveTypes;
+            cbLeaveType.SelectedIndex = 0;
+        }
+
+        private void ApplyFilters()
         {
             string keyword = txtSearch.Text.Trim();
+            string status = cbStatus.SelectedItem as string ?? "Pending";
+            string leaveType = cbLeaveType.SelectedItem as string ?? "All";
+            DateOnly? fromDate = dpFromDate.SelectedDate.HasValue ? DateOnly.FromDateTime(dpFromDate.SelectedDate.Value) : null;
+            DateOnly? toDate = dpToDate.SelectedDate.HasValue ? DateOnly.FromDateTime(dpToDate.SelectedDate.Value) : null;
 
-            var pendingRequests = _leaveRequestBLL.GetAll()
-                .Where(l => string.Equals(l.Status, "Pending", StringComparison.OrdinalIgnoreCase));
+            IEnumerable<LeaveRequest> requests = _leaveRequestBLL.GetAll();
+
+            if (!string.Equals(status, "All", StringComparison.OrdinalIgnoreCase))
+            {
+                requests = requests.Where(l => string.Equals(l.Status, status, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.Equals(leaveType, "All", StringComparison.OrdinalIgnoreCase))
+            {
+                requests = requests.Where(l => string.Equals(l.LeaveType, leaveType, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (fromDate.HasValue)
+            {
+                requests = requests.Where(l => DateOnly.FromDateTime(l.StartDate) >= fromDate.Value);
+            }
+
+            if (toDate.HasValue)
+            {
+                requests = requests.Where(l => DateOnly.FromDateTime(l.EndDate) <= toDate.Value);
+            }
 
             if (!string.IsNullOrWhiteSpace(keyword))
             {
-                pendingRequests = pendingRequests.Where(l =>
+                requests = requests.Where(l =>
                     (l.Employee != null && l.Employee.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                     || (!string.IsNullOrEmpty(l.LeaveType) && l.LeaveType.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                     || (!string.IsNullOrEmpty(l.Reason) && l.Reason.Contains(keyword, StringComparison.OrdinalIgnoreCase)));
             }
 
             dgPendingLeaves.ItemsSource = null;
-            dgPendingLeaves.ItemsSource = pendingRequests
+            dgPendingLeaves.ItemsSource = requests
                 .OrderBy(l => l.StartDate)
                 .ToList();
 
@@ -51,12 +92,46 @@ namespace HRManagementSystem.Views.Manager
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            RefreshData();
+            ApplyFilters();
         }
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            RefreshData();
+            ApplyFilters();
+        }
+
+        private void cbStatus_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            ApplyFilters();
+        }
+
+        private void cbLeaveType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            ApplyFilters();
+        }
+
+        private void dpFromDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            ApplyFilters();
+        }
+
+        private void dpToDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            ApplyFilters();
+        }
+
+        private void btnClearFilter_Click(object sender, RoutedEventArgs e)
+        {
+            txtSearch.Text = string.Empty;
+            cbStatus.SelectedItem = "Pending";
+            cbLeaveType.SelectedIndex = 0;
+            dpFromDate.SelectedDate = null;
+            dpToDate.SelectedDate = null;
+            ApplyFilters();
         }
 
         private void dgPendingLeaves_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -71,6 +146,10 @@ namespace HRManagementSystem.Views.Manager
             txtDateRange.Text = $"{selected.StartDate:dd/MM/yyyy} - {selected.EndDate:dd/MM/yyyy}";
             txtLeaveType.Text = string.IsNullOrWhiteSpace(selected.LeaveType) ? "N/A" : selected.LeaveType;
             txtReason.Text = string.IsNullOrWhiteSpace(selected.Reason) ? "N/A" : selected.Reason;
+
+            bool canProcess = string.Equals(selected.Status, "Pending", StringComparison.OrdinalIgnoreCase);
+            btnApprove.IsEnabled = canProcess;
+            btnReject.IsEnabled = canProcess;
         }
 
         private void btnApprove_Click(object sender, RoutedEventArgs e)
@@ -102,7 +181,7 @@ namespace HRManagementSystem.Views.Manager
             _leaveRequestBLL.Update(selected);
 
             MessageBox.Show($"Request has been {newStatus.ToLowerInvariant()}.", "Approval", MessageBoxButton.OK, MessageBoxImage.Information);
-            RefreshData();
+            ApplyFilters();
         }
 
         private void ClearDetail()
@@ -111,6 +190,8 @@ namespace HRManagementSystem.Views.Manager
             txtDateRange.Text = "N/A";
             txtLeaveType.Text = "N/A";
             txtReason.Text = "N/A";
+            btnApprove.IsEnabled = false;
+            btnReject.IsEnabled = false;
         }
     }
 }

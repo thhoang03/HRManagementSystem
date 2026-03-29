@@ -1,14 +1,17 @@
-﻿<Page x:Name="frmEmployees" x:Class="HRManagementSystem.Views.Admin.EmployeesView"
+﻿<Page x:Name="frmEmployees"
+      x:Class="HRManagementSystem.Views.Admin.EmployeesView"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       mc:Ignorable="d"
-      Background="#F8FAFC" Loaded="frmEmployees_Loaded">
+      Background="#F8FAFC"
+      Loaded="frmEmployees_Loaded">
 
     <Grid Margin="24">
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -23,15 +26,33 @@
                    VerticalAlignment="Center"
                    Foreground="#0F172A"/>
 
-        <StackPanel Grid.Row="1" Margin="0,16,0,16" Orientation="Horizontal">
+        <StackPanel Grid.Row="1"
+                    Margin="0,16,0,16"
+                    Orientation="Horizontal">
+
+            <TextBox x:Name="txtSearch"
+                     Width="220"
+                     Height="36"
+                     Padding="8"
+                     Margin="0,0,8,0"
+                     VerticalContentAlignment="Center"
+                     TextChanged="txtSearch_TextChanged"/>
+
+            <Button Content="Search"
+                    Width="90"
+                    Height="36"
+                    Background="#F9D678"
+                    FontWeight="SemiBold"/>
 
             <Button Content="+ New"
                     x:Name="btnNew"
                     Width="100"
                     Height="36"
-                    Margin="0,0,8,0"
-                    Background="#F9D678"
-                    FontWeight="SemiBold" Click="btnNew_Click"/>
+                    Margin="8,0,8,0"
+                    Background="#3B82F6"
+                    Foreground="White"
+                    FontWeight="SemiBold"
+                    Click="btnNew_Click"/>
 
             <Button Content="Deactive"
                     x:Name="btnDelete"
@@ -39,7 +60,8 @@
                     Height="36"
                     Margin="0,0,8,0"
                     Background="#EF4444"
-                    Foreground="White" Click="btnDelete_Click"/>
+                    Foreground="White"
+                    Click="btnDelete_Click"/>
 
             <Button Content="Active"
                     x:Name="btnActive"
@@ -50,24 +72,81 @@
                     Foreground="White"
                     Click="btnActive_Click"/>
 
-            <TextBox x:Name="txtSearch"
-                     Width="220"
-                     Height="36"
-                     Padding="8"
-                     Margin="0,0,8,0"
-                     VerticalContentAlignment="Center" TextChanged="txtSearch_TextChanged"/>
+        </StackPanel>
 
-            <Button Content="Search"
-                    Width="90"
+
+        <StackPanel Grid.Row="2"
+                    Margin="0,0,0,16"
+                    Orientation="Horizontal">
+            <TextBlock Text="Department:"
+                       VerticalAlignment="Center"
+                       Margin="0,0,6,0"
+                       Foreground="#334155"
+                       FontWeight="SemiBold"/>
+            <ComboBox x:Name="cbFilterDepartment"
+                      Width="150"
+                      Height="36"
+                      Margin="0,0,8,0"
+                      VerticalContentAlignment="Center"
+                      SelectionChanged="cbFilterDepartment_SelectionChanged"/>
+
+            <TextBlock Text="Position:"
+                       VerticalAlignment="Center"
+                       Margin="0,0,6,0"
+                       Foreground="#334155"
+                       FontWeight="SemiBold"/>
+            <ComboBox x:Name="cbFilterPosition"
+                      Width="150"
+                      Height="36"
+                      Margin="0,0,8,0"
+                      VerticalContentAlignment="Center"
+                      SelectionChanged="cbFilterPosition_SelectionChanged"/>
+
+            <TextBlock Text="Status:"
+                       VerticalAlignment="Center"
+                       Margin="0,0,6,0"
+                       Foreground="#334155"
+                       FontWeight="SemiBold"/>
+            <ComboBox x:Name="cbFilterStatus"
+                      Width="120"
+                      Height="36"
+                      Margin="0,0,8,0"
+                      VerticalContentAlignment="Center"
+                      SelectionChanged="cbFilterStatus_SelectionChanged">
+                <ComboBoxItem Content="All"/>
+                <ComboBoxItem Content="Active"/>
+                <ComboBoxItem Content="Deactive"/>
+                <ComboBoxItem Content="Inactive"/>
+            </ComboBox>
+
+            <TextBlock Text="Gender:"
+                       VerticalAlignment="Center"
+                       Margin="0,0,6,0"
+                       Foreground="#334155"
+                       FontWeight="SemiBold"/>
+            <ComboBox x:Name="cbFilterGender"
+                      Width="110"
+                      Height="36"
+                      Margin="0,0,8,0"
+                      VerticalContentAlignment="Center"
+                      SelectionChanged="cbFilterGender_SelectionChanged">
+                <ComboBoxItem Content="All"/>
+                <ComboBoxItem Content="Male"/>
+                <ComboBoxItem Content="Female"/>
+            </ComboBox>
+
+            <Button Content="Clear"
+                    Width="80"
                     Height="36"
-                    Background="#F9D678"
-                    FontWeight="SemiBold"/>
-
+                    Margin="8,0,0,0"
+                    Background="#E2E8F0"
+                    FontWeight="SemiBold"
+                    Click="btnClearFilter_Click"/>
         </StackPanel>
 
         <!-- CONTENT -->
 
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="3">
 
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
@@ -84,7 +163,8 @@
                     Margin="0,0,16,0">
 
                 <Border.Effect>
-                    <DropShadowEffect BlurRadius="12" Opacity="0.15"/>
+                    <DropShadowEffect BlurRadius="12"
+                                      Opacity="0.15"/>
                 </Border.Effect>
 
                 <DataGrid x:Name="dgEmployees"
@@ -92,7 +172,8 @@
                           IsReadOnly="True"
                           RowHeight="34"
                           GridLinesVisibility="None"
-                          HeadersVisibility="Column" SelectionChanged="dgEmployees_SelectionChanged">
+                          HeadersVisibility="Column"
+                          SelectionChanged="dgEmployees_SelectionChanged">
 
                     <DataGrid.Columns>
 
@@ -143,7 +224,8 @@
                     Padding="20">
 
                 <Border.Effect>
-                    <DropShadowEffect BlurRadius="12" Opacity="0.15"/>
+                    <DropShadowEffect BlurRadius="12"
+                                      Opacity="0.15"/>
                 </Border.Effect>
 
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -166,7 +248,8 @@
                         <!-- GENDER -->
 
                         <TextBlock Text="Gender"/>
-                        <StackPanel Orientation="Horizontal" Margin="5">
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="5">
                             <RadioButton Content="Male"
                                          x:Name="rbMale"
                                          IsChecked="true"
@@ -247,7 +330,8 @@
                                     Height="36"
                                     Margin="0,0,8,0"
                                     Background="#F9D678"
-                                    FontWeight="SemiBold" Click="btnAdd_Click"/>
+                                    FontWeight="SemiBold"
+                                    Click="btnAdd_Click"/>
 
                             <Button Content="Update"
                                     x:Name="btnUpdate"
@@ -255,7 +339,8 @@
                                     Height="36"
                                     Background="#3B82F6"
                                     Foreground="White"
-                                    FontWeight="SemiBold" Click="btnUpdate_Click"/>
+                                    FontWeight="SemiBold"
+                                    Click="btnUpdate_Click"/>
 
                         </StackPanel>
 

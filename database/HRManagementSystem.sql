@@ -41,6 +41,7 @@ CREATE TABLE Users (
     PasswordHash VARCHAR(255) NOT NULL,
     Role NVARCHAR(20) DEFAULT 'Employee',	-- Admin, HR, Manager, Employee
     LastLogin DATETIME,
+	Status NVARCHAR(50) NULL,
 
     FOREIGN KEY (EmployeeID) REFERENCES Employees(EmployeeID)
 );

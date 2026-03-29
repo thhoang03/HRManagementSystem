@@ -26,7 +26,8 @@ namespace HRManagementSystem.BLL
                 .Where(s =>
                     s.SettingKey.Contains(keyword, StringComparison.OrdinalIgnoreCase)
                     || s.SettingValue.Contains(keyword, StringComparison.OrdinalIgnoreCase)
-                    || (!string.IsNullOrEmpty(s.Description) && s.Description.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
+                    || (!string.IsNullOrEmpty(s.Description) && s.Description.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(s.Status) && s.Status.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
         }
     }

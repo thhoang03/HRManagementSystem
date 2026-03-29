@@ -67,6 +67,7 @@ namespace HRManagementSystem.Views.Admin
             setting.SettingKey = key;
             setting.SettingValue = value;
             setting.Description = txtDescription.Text.Trim();
+            setting.Status = "Active";
 
             _settingBLL.Add(setting);
             FillDgSettings();
@@ -96,13 +97,14 @@ namespace HRManagementSystem.Views.Admin
             }
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        private void btnActive_Click(object sender, RoutedEventArgs e)
         {
-            var setting = dgSettings.SelectedItem as Setting;
-            if (setting != null)
-            {
-                MessageBox.Show("Setting does not support Status. Delete action is disabled.", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+            UpdateSelectedStatus("Active");
+        }
+
+        private void btnDeactive_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateSelectedStatus("Deactive");
         }
 
         private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
@@ -110,6 +112,20 @@ namespace HRManagementSystem.Views.Admin
             string keyword = txtSearch.Text.Trim();
             dgSettings.ItemsSource = null;
             dgSettings.ItemsSource = _settingBLL.Search(keyword);
+        }
+
+        private void UpdateSelectedStatus(string status)
+        {
+            var setting = dgSettings.SelectedItem as Setting;
+            if (setting == null)
+            {
+                MessageBox.Show("Please select a setting first.", "Setting", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            setting.Status = status;
+            _settingBLL.Update(setting);
+            FillDgSettings();
         }
     }
 }

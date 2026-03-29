@@ -1,0 +1,188 @@
+<Page x:Class="HRManagementSystem.Views.Admin.PayrollDetailView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d"
+      Background="#F8FAFC"
+      d:DesignHeight="760"
+      d:DesignWidth="1300">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+            <Button Content="Back"
+                    Width="90"
+                    Height="36"
+                    Margin="0,0,12,0"
+                    Background="#E2E8F0"
+                    BorderThickness="0"
+                    FontWeight="SemiBold"
+                    Click="btnBack_Click"/>
+            <TextBlock Text="Payroll Detail"
+                       VerticalAlignment="Center"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Foreground="#0F172A"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0" Margin="0,0,0,16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Background="White" CornerRadius="12" Padding="20" Margin="0,0,8,0">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
+                        </Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Basic Info" FontSize="18" FontWeight="Bold" Margin="0,0,0,12"/>
+                            <UniformGrid Columns="2">
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Employee" Foreground="#64748B"/><TextBlock x:Name="txtEmployeeName" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Payroll ID" Foreground="#64748B"/><TextBlock x:Name="txtPayrollId" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Month/Year" Foreground="#64748B"/><TextBlock x:Name="txtMonthYear" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Status" Foreground="#64748B"/><TextBlock x:Name="txtStatus" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Contract Type" Foreground="#64748B"/><TextBlock x:Name="txtContractType" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Contract ID" Foreground="#64748B"/><TextBlock x:Name="txtContractId" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Created At" Foreground="#64748B"/><TextBlock x:Name="txtCreatedAt" FontWeight="SemiBold"/></StackPanel>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Background="White" CornerRadius="12" Padding="20" Margin="8,0,0,0">
+                        <Border.Effect><DropShadowEffect BlurRadius="12" Opacity="0.12"/></Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Salary Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,12"/>
+                            <UniformGrid Columns="2">
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Base Salary" Foreground="#64748B"/><TextBlock x:Name="txtBaseSalary" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Salary Per Day" Foreground="#64748B"/><TextBlock x:Name="txtSalaryPerDay" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Bonus" Foreground="#64748B"/><TextBlock x:Name="txtBonus" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Overtime Pay" Foreground="#64748B"/><TextBlock x:Name="txtOvertime" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Gross Salary" Foreground="#64748B"/><TextBlock x:Name="txtGrossSalary" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,10"><TextBlock Text="Net Salary" Foreground="#64748B"/><TextBlock x:Name="txtNetSalary" FontWeight="Bold" Foreground="#1D4ED8"/></StackPanel>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Grid.Row="1" Background="White" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                    <Border.Effect><DropShadowEffect BlurRadius="12" Opacity="0.12"/></Border.Effect>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="320"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Attendance and Leave Summary" FontSize="18" FontWeight="Bold" Margin="0,0,0,12"/>
+                            <UniformGrid Columns="2">
+                                <StackPanel Margin="0,0,0,8"><TextBlock Text="Standard Days" Foreground="#64748B"/><TextBlock x:Name="txtStandardDays" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,8"><TextBlock Text="Actual Work Days" Foreground="#64748B"/><TextBlock x:Name="txtActualDays" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,8"><TextBlock Text="Paid Leave Days" Foreground="#64748B"/><TextBlock x:Name="txtPaidLeaveDays" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,8"><TextBlock Text="Unpaid Leave Days" Foreground="#64748B"/><TextBlock x:Name="txtUnpaidLeaveDays" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,8"><TextBlock Text="Late Arrivals" Foreground="#64748B"/><TextBlock x:Name="txtLateCount" FontWeight="SemiBold"/></StackPanel>
+                                <StackPanel Margin="0,0,0,8"><TextBlock Text="Total Late Minutes" Foreground="#64748B"/><TextBlock x:Name="txtLateMinutes" FontWeight="SemiBold"/></StackPanel>
+                            </UniformGrid>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="16,0,0,0">
+                            <TextBlock Text="Deduction Related Detail Dates" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <DataGrid x:Name="dgReconcile" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column" RowHeight="32" GridLinesVisibility="None" BorderThickness="0" Height="220">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" Width="*"/>
+                                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="*"/>
+                                    <DataGridTextColumn Header="Minutes" Binding="{Binding LateMinutes}" Width="0.8*"/>
+                                    <DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="2*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="2" Background="White" CornerRadius="12" Padding="20" Margin="0,0,0,16">
+                    <Border.Effect><DropShadowEffect BlurRadius="12" Opacity="0.12"/></Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="Overtime Explanation" FontSize="18" FontWeight="Bold" Margin="0,0,0,8"/>
+                        <TextBlock x:Name="txtOvertimeExplanation" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                        <DataGrid x:Name="dgOvertimeExplain" AutoGenerateColumns="False" IsReadOnly="True" HeadersVisibility="Column" RowHeight="30" GridLinesVisibility="None" BorderThickness="0" Height="160">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Date" Binding="{Binding Date, StringFormat=dd/MM/yyyy}" Width="*"/>
+                                <DataGridTextColumn Header="Check Out" Binding="{Binding CheckOutTime}" Width="*"/>
+                                <DataGridTextColumn Header="OT Minutes" Binding="{Binding OvertimeMinutes}" Width="*"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+
+                <Grid Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Background="White" CornerRadius="12" Padding="20" Margin="0,0,8,0">
+                        <Border.Effect><DropShadowEffect BlurRadius="12" Opacity="0.12"/></Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Deduction Details" FontSize="18" FontWeight="Bold" Margin="0,0,0,12"/>
+                            <UniformGrid Columns="2">
+                                <TextBlock Text="Insurance Deduction" Foreground="#64748B" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtInsuranceDeduction" TextAlignment="Right" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock Text="Unpaid Leave Deduction" Foreground="#64748B" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtUnpaidLeaveDeduction" TextAlignment="Right" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock Text="Late Deduction" Foreground="#64748B" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtLateDeduction" TextAlignment="Right" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock Text="Bonus" Foreground="#64748B" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtDeductionBonus" TextAlignment="Right" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock Text="Overtime Pay" Foreground="#64748B" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtDeductionOvertime" TextAlignment="Right" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock Text="Total Deduction" FontWeight="Bold" Margin="0,4,0,0"/>
+                                <TextBlock x:Name="txtTotalDeduction" TextAlignment="Right" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Background="White" CornerRadius="12" Padding="20" Margin="8,0,0,0">
+                        <Border.Effect><DropShadowEffect BlurRadius="12" Opacity="0.12"/></Border.Effect>
+                        <StackPanel>
+                            <TextBlock Text="Applied Settings" FontSize="18" FontWeight="Bold" Margin="0,0,0,12"/>
+                            <UniformGrid Columns="2">
+                                <TextBlock Text="WORK_START_TIME" Foreground="#64748B" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtWorkStart" TextAlignment="Right" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock Text="WORK_END_TIME" Foreground="#64748B" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtWorkEnd" TextAlignment="Right" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock Text="LATE_GRACE_MINUTES" Foreground="#64748B" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtLateGrace" TextAlignment="Right" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock Text="INSURANCE_RATE" Foreground="#64748B" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtInsuranceRate" TextAlignment="Right" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock Text="STANDARD_WORK_DAYS" Foreground="#64748B" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="txtSettingWorkDays" TextAlignment="Right" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            </UniformGrid>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,16,0,0">
+            <Button Content="Recalculate" Width="110" Height="36" Margin="0,0,8,0" Background="White" BorderBrush="#94A3B8" BorderThickness="1" Foreground="#0F172A" FontWeight="SemiBold" Click="btnRecalculate_Click"/>
+            <Button Content="Export Payslip" Width="120" Height="36" Margin="0,0,8,0" Background="White" BorderBrush="#94A3B8" BorderThickness="1" Foreground="#0F172A" FontWeight="SemiBold" Click="btnExport_Click"/>
+            <Button x:Name="btnApprovePayroll" Content="Approve Payroll" Width="130" Height="36" Margin="0,0,8,0" Background="#22C55E" BorderThickness="0" Foreground="White" FontWeight="SemiBold" Click="btnApprovePayroll_Click"/>
+            <Button x:Name="btnPayPayroll" Content="Pay Payroll" Width="120" Height="36" Background="#0EA5E9" BorderThickness="0" Foreground="White" FontWeight="SemiBold" Click="btnPayPayroll_Click"/>
+        </StackPanel>
+    </Grid>
+</Page>

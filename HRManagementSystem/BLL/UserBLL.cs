@@ -27,6 +27,7 @@ namespace HRManagementSystem.BLL
                 .Where(u =>
                     (!string.IsNullOrEmpty(u.Username) && u.Username.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                     || (!string.IsNullOrEmpty(u.Role) && u.Role.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(u.Status) && u.Status.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                     || (u.Employee != null && u.Employee.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
                 .ToList();
         }

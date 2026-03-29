@@ -36,14 +36,22 @@
                     FontWeight="SemiBold"
                     Click="btnNew_Click"/>
 
-            <Button Content="Delete"
+            <Button Content="Deactive"
                     x:Name="btnDelete"
                     Width="100"
                     Height="36"
-                    Margin="0,0,16,0"
+                    Margin="0,0,8,0"
                     Background="#EF4444"
                     Foreground="White"
                     Click="btnDelete_Click"/>
+            <Button Content="Active"
+                    x:Name="btnActive"
+                    Width="100"
+                    Height="36"
+                    Margin="0,0,16,0"
+                    Background="#22C55E"
+                    Foreground="White"
+                    Click="btnActive_Click"/>
 
             <TextBox x:Name="txtSearch"
                      Width="220"
@@ -102,6 +110,9 @@
 
                         <DataGridTextColumn Header="Role"
                                             Binding="{Binding Role}"
+                                            Width="*"/>
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding Status}"
                                             Width="*"/>
 
                         <DataGridTextColumn Header="Employee"
@@ -167,6 +178,13 @@
                                  Height="34"
                                  Margin="0,6,0,12"
                                  Padding="8"/>
+
+                        <TextBlock Text="Status"/>
+                        <ComboBox x:Name="cbStatus"
+                                  Margin="0,6,0,12">
+                            <ComboBoxItem Content="Active"/>
+                            <ComboBoxItem Content="Deactive"/>
+                        </ComboBox>
 
                         <!-- LAST LOGIN -->
 
