@@ -53,21 +53,28 @@ namespace HRManagementSystem.Views.Admin
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            string name = txtPositionName.Text.Trim();
-            string baseSalary_str = txtBaseSalary.Text.Trim();
-            if (!TryGetPositionInput(name, baseSalary_str, out decimal baseSalary))
+            try
             {
-                return;
+                string name = txtPositionName.Text.Trim();
+                string baseSalary_str = txtBaseSalary.Text.Trim();
+                if (!TryGetPositionInput(name, baseSalary_str, null, out decimal baseSalary))
+                {
+                    return;
+                }
+
+                Position p = new();
+                p.PositionName = name;
+                p.BaseSalary = baseSalary;
+                p.Status = "Active";
+
+                _posBLL.Add(p);
+                FillDataGridPositons();
+                Clear();
             }
-
-            Position p = new();
-            p.PositionName = name;
-            p.BaseSalary = baseSalary;
-            p.Status = "Active";
-
-            _posBLL.Add(p);
-            FillDataGridPositons();
-            Clear();
+            catch (Exception ex)
+            {
+                ShowPositionSaveError(ex);
+            }
         }
 
         private void dgPositions_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -85,19 +92,26 @@ namespace HRManagementSystem.Views.Admin
             var pos = dgPositions.SelectedItem as Position;
             if (pos != null)
             {
-                string name = txtPositionName.Text.Trim();
-                string baseSalary_str = txtBaseSalary.Text.Trim();
-                if (!TryGetPositionInput(name, baseSalary_str, out decimal baseSalary))
+                try
                 {
-                    return;
+                    string name = txtPositionName.Text.Trim();
+                    string baseSalary_str = txtBaseSalary.Text.Trim();
+                    if (!TryGetPositionInput(name, baseSalary_str, pos.PositionId, out decimal baseSalary))
+                    {
+                        return;
+                    }
+
+                    pos.PositionName = name;
+                    pos.BaseSalary = baseSalary;
+
+                    _posBLL.Update(pos);
+                    FillDataGridPositons();
+                    Clear();
                 }
-
-                pos.PositionName = name;
-                pos.BaseSalary = baseSalary;
-
-                _posBLL.Update(pos);
-                FillDataGridPositons();
-                Clear();
+                catch (Exception ex)
+                {
+                    ShowPositionSaveError(ex);
+                }
             }
         }
 
@@ -118,13 +132,20 @@ namespace HRManagementSystem.Views.Admin
             dgPositions.ItemsSource = _posBLL.Search(name);
         }
 
-        private bool TryGetPositionInput(string name, string baseSalaryText, out decimal baseSalary)
+        private bool TryGetPositionInput(string name, string baseSalaryText, int? excludePositionId, out decimal baseSalary)
         {
             baseSalary = 0;
 
             if (string.IsNullOrWhiteSpace(name))
             {
                 MessageBox.Show("Position name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtPositionName.Focus();
+                return false;
+            }
+
+            if (!_posBLL.IsPositionNameUnique(name, excludePositionId))
+            {
+                MessageBox.Show("Position name already exists. Please choose a different name.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 txtPositionName.Focus();
                 return false;
             }
@@ -156,8 +177,40 @@ namespace HRManagementSystem.Views.Admin
             }
 
             pos.Status = status;
-            _posBLL.Update(pos);
-            FillDataGridPositons();
+            try
+            {
+                _posBLL.Update(pos);
+                FillDataGridPositons();
+            }
+            catch (Exception ex)
+            {
+                ShowPositionSaveError(ex);
+            }
+        }
+
+        private void ShowPositionSaveError(Exception ex)
+        {
+            string message = ex.Message ?? string.Empty;
+            if (IsUniqueConstraintViolation(message))
+            {
+                MessageBox.Show("Position name already exists. Please choose a different name.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtPositionName.Focus();
+                return;
+            }
+
+            MessageBox.Show($"Cannot save position. {message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private static bool IsUniqueConstraintViolation(string errorMessage)
+        {
+            if (string.IsNullOrWhiteSpace(errorMessage))
+            {
+                return false;
+            }
+
+            return errorMessage.Contains("UNIQUE", StringComparison.OrdinalIgnoreCase)
+                || errorMessage.Contains("duplicate", StringComparison.OrdinalIgnoreCase)
+                || errorMessage.Contains("Cannot insert duplicate key", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

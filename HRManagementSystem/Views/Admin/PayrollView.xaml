@@ -74,7 +74,7 @@
                     Width="100"
                     Height="36"
                     Margin="0,0,8,0"
-                    Background="#3B82F6"
+                    Background="#22C55E"
                     Foreground="White"
                     BorderThickness="0"
                     FontWeight="SemiBold"
@@ -198,8 +198,7 @@
                                     <Button Content="Detail"
                                             Margin="0,0,6,0"
                                             Padding="10,2"
-                                            Background="#64748B"
-                                            Foreground="White"
+                                            Background="#F9D678"
                                             BorderThickness="0"
                                             Click="btnRowDetail_Click"/>
                                     <Button Content="Save"
@@ -223,7 +222,7 @@
                                     <Button Content="Approve"
                                             Margin="0,0,6,0"
                                             Padding="10,2"
-                                            Background="#3B82F6"
+                                            Background="#22C55E"
                                             Foreground="White"
                                             BorderThickness="0"
                                             Click="btnRowApprove_Click">

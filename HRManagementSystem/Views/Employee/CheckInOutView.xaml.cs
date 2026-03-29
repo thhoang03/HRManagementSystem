@@ -1,6 +1,7 @@
 using HRManagementSystem.BLL;
 using HRManagementSystem.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -14,6 +15,7 @@ namespace HRManagementSystem.Views.Employee
     {
         private readonly AttendanceBLL _attendanceBLL = new();
         private User? _currentUser;
+        private List<Attendance> _myAttendance = new();
 
         public CheckInOutView()
         {
@@ -24,6 +26,7 @@ namespace HRManagementSystem.Views.Employee
         {
             _currentUser = Application.Current.Properties["CurrentUser"] as User;
             txtToday.Text = $"Today: {DateTime.Now:dddd, dd MMM yyyy}";
+            cbFilterStatus.SelectedIndex = 0;
             RefreshData();
         }
 
@@ -34,17 +37,16 @@ namespace HRManagementSystem.Views.Employee
                 return;
             }
 
-            var myAttendance = _attendanceBLL.GetAll()
+            _myAttendance = _attendanceBLL.GetAll()
                 .Where(a => a.EmployeeId == employeeId)
                 .OrderByDescending(a => a.AttendanceDate)
                 .ThenByDescending(a => a.CheckIn)
                 .ToList();
 
-            dgAttendance.ItemsSource = null;
-            dgAttendance.ItemsSource = myAttendance;
+            ApplyFilters();
 
             var today = DateOnly.FromDateTime(DateTime.Today);
-            var todayRecord = myAttendance.FirstOrDefault(a => a.AttendanceDate == today);
+            var todayRecord = _myAttendance.FirstOrDefault(a => a.AttendanceDate == today);
 
             if (todayRecord == null)
             {
@@ -136,6 +138,78 @@ namespace HRManagementSystem.Views.Employee
             _attendanceBLL.Update(todayRecord);
             MessageBox.Show("Check out successful.", "Attendance", MessageBoxButton.OK, MessageBoxImage.Information);
             RefreshData();
+        }
+
+        private void ApplyFilters()
+        {
+            IEnumerable<Attendance> data = _myAttendance;
+
+            string keyword = txtSearch.Text.Trim();
+            if (!string.IsNullOrWhiteSpace(keyword))
+            {
+                data = data.Where(a =>
+                    (!string.IsNullOrEmpty(a.Status) && a.Status.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(a.DeviceIp) && a.DeviceIp.Contains(keyword, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            string status = (cbFilterStatus.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "All";
+            if (!string.Equals(status, "All", StringComparison.OrdinalIgnoreCase))
+            {
+                data = data.Where(a => string.Equals(a.Status, status, StringComparison.OrdinalIgnoreCase));
+            }
+
+            DateOnly? fromDate = dpFromDate.SelectedDate.HasValue
+                ? DateOnly.FromDateTime(dpFromDate.SelectedDate.Value)
+                : null;
+            DateOnly? toDate = dpToDate.SelectedDate.HasValue
+                ? DateOnly.FromDateTime(dpToDate.SelectedDate.Value)
+                : null;
+
+            if (fromDate.HasValue)
+            {
+                data = data.Where(a => a.AttendanceDate.HasValue && a.AttendanceDate.Value >= fromDate.Value);
+            }
+
+            if (toDate.HasValue)
+            {
+                data = data.Where(a => a.AttendanceDate.HasValue && a.AttendanceDate.Value <= toDate.Value);
+            }
+
+            dgAttendance.ItemsSource = null;
+            dgAttendance.ItemsSource = data.ToList();
+        }
+
+        private void txtSearch_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            ApplyFilters();
+        }
+
+        private void cbFilterStatus_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            ApplyFilters();
+        }
+
+        private void dpFromDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            ApplyFilters();
+        }
+
+        private void dpToDate_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded) return;
+            ApplyFilters();
+        }
+
+        private void btnClearFilter_Click(object sender, RoutedEventArgs e)
+        {
+            txtSearch.Text = string.Empty;
+            cbFilterStatus.SelectedIndex = 0;
+            dpFromDate.SelectedDate = null;
+            dpToDate.SelectedDate = null;
+            ApplyFilters();
         }
 
         private bool TryGetCurrentEmployeeId(out int employeeId)
