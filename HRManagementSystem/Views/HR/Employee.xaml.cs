@@ -201,14 +201,40 @@ public class EmployeeInput
         private void dgEmployees_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var emp = dgEmployees.SelectedItem as HRManagementSystem.Models.Employee;
-            if (emp == null) return;
+            if (emp == null)
+            {
+                ClearDetailInputs();
+                return;
+            }
+
+            // Populate detail fields for viewing/updating
+            txtFullName.Text = emp.FullName ?? string.Empty;
+            txtEmail.Text = emp.Email ?? string.Empty;
+            txtPhone.Text = emp.Phone ?? string.Empty;
+            cbDepartment.SelectedValue = emp.DepartmentId;
+            cbPosition.SelectedValue = emp.PositionId;
+
+            // If employee is inactive, offer to activate (user can still view/update fields)
             if (!string.IsNullOrWhiteSpace(emp.Status) && emp.Status.Equals("Inactive", System.StringComparison.OrdinalIgnoreCase))
             {
                 if (MessageBox.Show($"Nhân viên '{emp.FullName}' hiện Inactive. Bạn có muốn active nhân viên này không?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
                     emp.Status = "Active";
-                    _empBLL.Update(emp);
-                    LoadEmployees();
+                    try
+                    {
+                        _empBLL.Update(emp);
+                        LoadEmployees();
+                        // re-select the employee after reload
+                        var reselected = _empBLL.GetAll().FirstOrDefault(x => x.EmployeeId == emp.EmployeeId);
+                        if (reselected != null)
+                        {
+                            dgEmployees.SelectedItem = reselected;
+                        }
+                    }
+                    catch (System.Exception ex)
+                    {
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
             }
         }
