@@ -27,7 +27,7 @@ namespace HRManagementSystem.Views.Admin
 
         private void MainAdmin_Loaded(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new WelcomeView());
+            MainFrame.Navigate(new DashboardView());
         }
 
         private void Sidebar_Loaded(object sender, RoutedEventArgs e)

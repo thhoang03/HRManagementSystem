@@ -10,15 +10,86 @@
     <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="My Leave Requests"
+        <TextBlock Grid.Row="0"
+                   Text="My Leave Requests"
                    FontSize="24"
                    FontWeight="Bold"
                    Foreground="#0F172A"/>
 
-        <Grid Grid.Row="1" Margin="0,16,0,0">
+        <Border Grid.Row="1"
+                Background="White"
+                CornerRadius="12"
+                Padding="12"
+                Margin="0,8,0,8">
+            <StackPanel Orientation="Horizontal">
+                <Button Content="Search"
+                        Width="90"
+                        Height="36"
+                        Background="#F9D678"
+                        Margin="0,0,8,0"
+                        FontWeight="SemiBold"/>
+                <TextBox x:Name="txtSearch"
+                         Width="190"
+                         Height="34"
+                         Padding="8"
+                         Margin="0,0,8,0"
+                         VerticalContentAlignment="Center"
+                         BorderBrush="#CBD5E1"
+                         BorderThickness="1"
+                         TextChanged="txtSearch_TextChanged"/>
+
+                <ComboBox x:Name="cbFilterStatus"
+                          Width="120"
+                          Height="34"
+                          Margin="0,0,8,0"
+                          SelectionChanged="cbFilterStatus_SelectionChanged">
+                    <ComboBoxItem Content="All"/>
+                    <ComboBoxItem Content="Pending"/>
+                    <ComboBoxItem Content="Approved"/>
+                    <ComboBoxItem Content="Rejected"/>
+                </ComboBox>
+
+                <TextBlock Text="From:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,6,0"
+                           Foreground="#334155"
+                           FontWeight="SemiBold"/>
+
+                <DatePicker x:Name="dpFromDate"
+                            Width="130"
+                            Height="34"
+                            Margin="0,0,8,0"
+                            SelectedDateChanged="dpFromDate_SelectedDateChanged"/>
+
+                <TextBlock Text="To:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,6,0"
+                           Foreground="#334155"
+                           FontWeight="SemiBold"/>
+                <DatePicker x:Name="dpToDate"
+                            Width="130"
+                            Height="34"
+                            Margin="0,0,8,0"
+                            SelectedDateChanged="dpToDate_SelectedDateChanged"/>
+
+                <Button Content="Clear"
+                        Height="34"
+                        Padding="14,0"
+                        Background="#E2E8F0"
+                        BorderThickness="0"
+                        Foreground="#0F172A"
+                        Click="btnClearFilter_Click"/>
+            </StackPanel>
+
+        </Border>
+
+        <Grid Grid.Row="2"
+              Margin="0,16,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="1*"/>
@@ -30,9 +101,12 @@
                     Padding="16"
                     Margin="0,0,16,0">
                 <Border.Effect>
-                    <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
+                    <DropShadowEffect BlurRadius="12"
+                                      Opacity="0.12"/>
                 </Border.Effect>
-                <DataGrid x:Name="dgMyLeaves"
+
+                <DataGrid Grid.Row="1"
+                          x:Name="dgMyLeaves"
                           AutoGenerateColumns="False"
                           IsReadOnly="True"
                           RowHeight="36"
@@ -40,14 +114,27 @@
                           HeadersVisibility="Column"
                           BorderThickness="0">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding LeaveId}" Width="*"/>
-                        <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate,StringFormat=d}" Width="*"/>
-                        <DataGridTextColumn Header="End Date" Binding="{Binding EndDate,StringFormat=d}" Width="*"/>
-                        <DataGridTextColumn Header="Type" Binding="{Binding LeaveType}" Width="*"/>
-                        <DataGridTextColumn Header="Reason" Binding="{Binding Reason}" Width="2*"/>
-                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
+                        <DataGridTextColumn Header="ID"
+                                            Binding="{Binding LeaveId}"
+                                            Width="*"/>
+                        <DataGridTextColumn Header="Start Date"
+                                            Binding="{Binding StartDate,StringFormat=d}"
+                                            Width="*"/>
+                        <DataGridTextColumn Header="End Date"
+                                            Binding="{Binding EndDate,StringFormat=d}"
+                                            Width="*"/>
+                        <DataGridTextColumn Header="Type"
+                                            Binding="{Binding LeaveType}"
+                                            Width="*"/>
+                        <DataGridTextColumn Header="Reason"
+                                            Binding="{Binding Reason}"
+                                            Width="2*"/>
+                        <DataGridTextColumn Header="Status"
+                                            Binding="{Binding Status}"
+                                            Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
+
             </Border>
 
             <Border Grid.Column="1"
@@ -55,7 +142,8 @@
                     CornerRadius="12"
                     Padding="20">
                 <Border.Effect>
-                    <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
+                    <DropShadowEffect BlurRadius="12"
+                                      Opacity="0.12"/>
                 </Border.Effect>
 
                 <StackPanel>
@@ -64,19 +152,25 @@
                                FontWeight="Bold"
                                Margin="0,0,0,20"/>
 
-                    <TextBlock Text="Start Date" FontWeight="SemiBold"/>
-                    <DatePicker x:Name="dpStartDate" Margin="0,6,0,12"/>
+                    <TextBlock Text="Start Date"
+                               FontWeight="SemiBold"/>
+                    <DatePicker x:Name="dpStartDate"
+                                Margin="0,6,0,12"/>
 
-                    <TextBlock Text="End Date" FontWeight="SemiBold"/>
-                    <DatePicker x:Name="dpEndDate" Margin="0,6,0,12"/>
+                    <TextBlock Text="End Date"
+                               FontWeight="SemiBold"/>
+                    <DatePicker x:Name="dpEndDate"
+                                Margin="0,6,0,12"/>
 
-                    <TextBlock Text="Leave Type" FontWeight="SemiBold"/>
+                    <TextBlock Text="Leave Type"
+                               FontWeight="SemiBold"/>
                     <TextBox x:Name="txtLeaveType"
                              Height="36"
                              Padding="8"
                              Margin="0,6,0,12"/>
 
-                    <TextBlock Text="Reason" FontWeight="SemiBold"/>
+                    <TextBlock Text="Reason"
+                               FontWeight="SemiBold"/>
                     <TextBox x:Name="txtReason"
                              Height="80"
                              Padding="8"

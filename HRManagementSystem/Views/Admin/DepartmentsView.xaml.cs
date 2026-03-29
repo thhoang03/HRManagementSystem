@@ -47,20 +47,27 @@ namespace HRManagementSystem.Views.Admin
 
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            string name = txtDeptName.Text.Trim();
-            string des = txtDescription.Text.Trim();
-            if (!ValidateDepartmentInput(name))
+            try
             {
-                return;
-            }
+                string name = txtDeptName.Text.Trim();
+                string des = txtDescription.Text.Trim();
+                if (!ValidateDepartmentInput(name, null))
+                {
+                    return;
+                }
 
-            Department dept = new Department();
-            dept.DepartmentName = name;
-            dept.Description = des;
-            dept.Status = "Active";
-            _deptBLL.Add(dept);
-            FillDataGridDepartments();
-            Clear();
+                Department dept = new Department();
+                dept.DepartmentName = name;
+                dept.Description = des;
+                dept.Status = "Active";
+                _deptBLL.Add(dept);
+                FillDataGridDepartments();
+                Clear();
+            }
+            catch (Exception ex)
+            {
+                ShowDepartmentSaveError(ex);
+            }
         }
 
         private void btnNew_Click(object sender, RoutedEventArgs e)
@@ -84,18 +91,25 @@ namespace HRManagementSystem.Views.Admin
             var dept = dgDepartments.SelectedItem as Department;
             if (dept != null)
             {
-                string deptName = txtDeptName.Text.Trim();
-                if (!ValidateDepartmentInput(deptName))
+                try
                 {
-                    return;
+                    string deptName = txtDeptName.Text.Trim();
+                    if (!ValidateDepartmentInput(deptName, dept.DepartmentId))
+                    {
+                        return;
+                    }
+
+                    dept.DepartmentName = deptName;
+                    dept.Description = txtDescription.Text.Trim();
+
+                    _deptBLL.Update(dept);
+                    FillDataGridDepartments();
+                    Clear();
                 }
-
-                dept.DepartmentName = deptName;
-                dept.Description = txtDescription.Text.Trim();
-
-                _deptBLL.Update(dept);
-                FillDataGridDepartments();
-                Clear();
+                catch (Exception ex)
+                {
+                    ShowDepartmentSaveError(ex);
+                }
             }
         }
 
@@ -116,7 +130,7 @@ namespace HRManagementSystem.Views.Admin
             dgDepartments.ItemsSource = _deptBLL.Search(name);
         }
 
-        private bool ValidateDepartmentInput(string departmentName)
+        private bool ValidateDepartmentInput(string departmentName, int? excludeDepartmentId)
         {
             if (string.IsNullOrWhiteSpace(departmentName))
             {
@@ -128,6 +142,13 @@ namespace HRManagementSystem.Views.Admin
             if (departmentName.Length > 100)
             {
                 MessageBox.Show("Department name must be 100 characters or fewer.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtDeptName.Focus();
+                return false;
+            }
+
+            if (!_deptBLL.IsDepartmentNameUnique(departmentName, excludeDepartmentId))
+            {
+                MessageBox.Show("Department name already exists. Please choose a different name.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 txtDeptName.Focus();
                 return false;
             }
@@ -145,8 +166,40 @@ namespace HRManagementSystem.Views.Admin
             }
 
             dept.Status = status;
-            _deptBLL.Update(dept);
-            FillDataGridDepartments();
+            try
+            {
+                _deptBLL.Update(dept);
+                FillDataGridDepartments();
+            }
+            catch (Exception ex)
+            {
+                ShowDepartmentSaveError(ex);
+            }
+        }
+
+        private void ShowDepartmentSaveError(Exception ex)
+        {
+            string message = ex.Message ?? string.Empty;
+            if (IsUniqueConstraintViolation(message))
+            {
+                MessageBox.Show("Department name already exists. Please choose a different name.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                txtDeptName.Focus();
+                return;
+            }
+
+            MessageBox.Show($"Cannot save department. {message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private static bool IsUniqueConstraintViolation(string errorMessage)
+        {
+            if (string.IsNullOrWhiteSpace(errorMessage))
+            {
+                return false;
+            }
+
+            return errorMessage.Contains("UNIQUE", StringComparison.OrdinalIgnoreCase)
+                || errorMessage.Contains("duplicate", StringComparison.OrdinalIgnoreCase)
+                || errorMessage.Contains("Cannot insert duplicate key", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

@@ -28,5 +28,10 @@ namespace HRManagementSystem.BLL
                                    || (!string.IsNullOrEmpty(p.Status) && p.Status.Contains(name, StringComparison.OrdinalIgnoreCase)))
                           .ToList();
         }
+
+        public bool IsPositionNameUnique(string positionName, int? excludePositionId = null)
+        {
+            return !_posDAL.ExistsPositionName(positionName, excludePositionId);
+        }
     }
 }

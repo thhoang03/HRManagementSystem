@@ -30,5 +30,10 @@ namespace HRManagementSystem.BLL
                            .ToList();
         }
 
+        public bool IsDepartmentNameUnique(string departmentName, int? excludeDepartmentId = null)
+        {
+            return !_deptDAL.ExistsDepartmentName(departmentName, excludeDepartmentId);
+        }
+
     }
 }

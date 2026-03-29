@@ -11,6 +11,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -40,7 +41,8 @@
                                Foreground="#475569"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <StackPanel Grid.Column="1"
+                        Orientation="Horizontal">
                     <Button x:Name="btnCheckIn"
                             Content="Check In"
                             Width="110"
@@ -67,9 +69,76 @@
         <Border Grid.Row="2"
                 Background="White"
                 CornerRadius="12"
+                Padding="12"
+                Margin="0,0,0,16">
+            <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center">
+                <Button Content="Search"
+                        Width="90"
+                        Height="36"
+                        Background="#F9D678"
+                        Margin="0,0,8,0"
+                        FontWeight="SemiBold"/>
+                <TextBox x:Name="txtSearch"
+                         Width="220"
+                         Height="34"
+                         Padding="8"
+                         Margin="0,0,8,0"
+                         VerticalContentAlignment="Center"
+                         BorderBrush="#CBD5E1"
+                         BorderThickness="1"
+                         TextChanged="txtSearch_TextChanged"/>
+
+                <ComboBox x:Name="cbFilterStatus"
+                          Width="140"
+                          Height="34"
+                          Margin="0,0,8,0"
+                          SelectionChanged="cbFilterStatus_SelectionChanged">
+                    <ComboBoxItem Content="All"/>
+                    <ComboBoxItem Content="Present"/>
+                    <ComboBoxItem Content="Late"/>
+                    <ComboBoxItem Content="Absent"/>
+                </ComboBox>
+
+                <TextBlock Text="From:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,6,0"
+                           Foreground="#334155"
+                           FontWeight="SemiBold"/>
+                <DatePicker x:Name="dpFromDate"
+                            Width="140"
+                            Height="34"
+                            Margin="0,0,8,0"
+                            SelectedDateChanged="dpFromDate_SelectedDateChanged"/>
+
+                <TextBlock Text="To:"
+                           VerticalAlignment="Center"
+                           Margin="0,0,6,0"
+                           Foreground="#334155"
+                           FontWeight="SemiBold"/>
+                <DatePicker x:Name="dpToDate"
+                            Width="140"
+                            Height="34"
+                            Margin="0,0,8,0"
+                            SelectedDateChanged="dpToDate_SelectedDateChanged"/>
+
+                <Button Content="Clear"
+                        Height="34"
+                        Padding="14,0"
+                        Background="#E2E8F0"
+                        BorderThickness="0"
+                        Foreground="#0F172A"
+                        Click="btnClearFilter_Click"/>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="3"
+                Background="White"
+                CornerRadius="12"
                 Padding="16">
             <Border.Effect>
-                <DropShadowEffect BlurRadius="12" Opacity="0.12"/>
+                <DropShadowEffect BlurRadius="12"
+                        Opacity="0.12"/>
             </Border.Effect>
 
             <DataGrid x:Name="dgAttendance"
@@ -80,11 +149,21 @@
                       HeadersVisibility="Column"
                       BorderThickness="0">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Date" Binding="{Binding AttendanceDate}" Width="*"/>
-                    <DataGridTextColumn Header="Check In" Binding="{Binding CheckIn,StringFormat=g}" Width="*"/>
-                    <DataGridTextColumn Header="Check Out" Binding="{Binding CheckOut,StringFormat=g}" Width="*"/>
-                    <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="*"/>
-                    <DataGridTextColumn Header="Device IP" Binding="{Binding DeviceIp}" Width="*"/>
+                    <DataGridTextColumn Header="Date"
+                            Binding="{Binding AttendanceDate}"
+                            Width="*"/>
+                    <DataGridTextColumn Header="Check In"
+                            Binding="{Binding CheckIn,StringFormat=g}"
+                            Width="*"/>
+                    <DataGridTextColumn Header="Check Out"
+                            Binding="{Binding CheckOut,StringFormat=g}"
+                            Width="*"/>
+                    <DataGridTextColumn Header="Status"
+                            Binding="{Binding Status}"
+                            Width="*"/>
+                    <DataGridTextColumn Header="Device IP"
+                            Binding="{Binding DeviceIp}"
+                            Width="*"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>

@@ -41,18 +41,9 @@
             <Button Content="Search"
                     Width="90"
                     Height="36"
+                    Margin="0,0,8,0"
                     Background="#F9D678"
                     FontWeight="SemiBold"/>
-
-            <Button Content="+ New"
-                    x:Name="btnNew"
-                    Width="100"
-                    Height="36"
-                    Margin="8,0,8,0"
-                    Background="#3B82F6"
-                    Foreground="White"
-                    FontWeight="SemiBold"
-                    Click="btnNew_Click"/>
 
             <Button Content="Deactive"
                     x:Name="btnDelete"
@@ -149,8 +140,7 @@
         <Grid Grid.Row="3">
 
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
 
@@ -172,13 +162,12 @@
                           IsReadOnly="True"
                           RowHeight="34"
                           GridLinesVisibility="None"
-                          HeadersVisibility="Column"
-                          SelectionChanged="dgEmployees_SelectionChanged">
+                          HeadersVisibility="Column">
 
                     <DataGrid.Columns>
 
                         <DataGridTextColumn Header="ID"
-                                            Binding="{Binding EmployeeID}"
+                                            Binding="{Binding EmployeeId}"
                                             Width="1*"/>
 
                         <DataGridTextColumn Header="Full Name"
@@ -212,141 +201,6 @@
                     </DataGrid.Columns>
 
                 </DataGrid>
-
-            </Border>
-
-
-            <!-- EMPLOYEE DETAIL -->
-
-            <Border Grid.Column="1"
-                    Background="White"
-                    CornerRadius="12"
-                    Padding="20">
-
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="12"
-                                      Opacity="0.15"/>
-                </Border.Effect>
-
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-
-                    <StackPanel>
-
-                        <TextBlock Text="Employee Detail"
-                                   FontSize="20"
-                                   FontWeight="Bold"
-                                   Margin="0,0,0,20"/>
-
-                        <!-- FULL NAME -->
-
-                        <TextBlock Text="Full Name"/>
-                        <TextBox x:Name="txtName"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"/>
-
-                        <!-- GENDER -->
-
-                        <TextBlock Text="Gender"/>
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="5">
-                            <RadioButton Content="Male"
-                                         x:Name="rbMale"
-                                         IsChecked="true"
-                                         GroupName="gender"
-                                         Margin="0,0,16,0"/>
-                            <RadioButton Content="Female"
-                                         x:Name="rbFemale"
-                                         GroupName="gender"/>
-                        </StackPanel>
-
-                        <!-- DATE OF BIRTH -->
-
-                        <TextBlock Text="Date of Birth"/>
-                        <DatePicker x:Name="dpDOB"
-                                    Margin="0,6,0,12"/>
-
-                        <!-- EMAIL -->
-
-                        <TextBlock Text="Email"/>
-                        <TextBox x:Name="txtEmail"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"/>
-
-                        <!-- PHONE -->
-
-                        <TextBlock Text="Phone"/>
-                        <TextBox x:Name="txtPhone"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"/>
-
-                        <!-- ADDRESS -->
-
-                        <TextBlock Text="Address"/>
-                        <TextBox x:Name="txtAddress"
-                                 Height="34"
-                                 Margin="0,6,0,12"
-                                 Padding="8"/>
-
-                        <!-- HIRE DATE -->
-
-                        <TextBlock Text="Hire Date"/>
-                        <DatePicker x:Name="dpHireDate"
-                                    Margin="0,6,0,12"/>
-
-                        <!-- DEPARTMENT -->
-
-                        <TextBlock Text="Department"/>
-                        <ComboBox x:Name="cbDepartments"
-                                  Margin="0,6,0,12"/>
-
-                        <!-- POSITION -->
-
-                        <TextBlock Text="Position"/>
-                        <ComboBox x:Name="cbPositions"
-                                  Margin="0,6,0,12"/>
-
-                        <!-- STATUS -->
-
-                        <TextBlock Text="Status"/>
-                        <ComboBox x:Name="cbStatus"
-                                  Margin="0,6,0,20">
-
-                            <ComboBoxItem Content="Active"/>
-                            <ComboBoxItem Content="Inactive"/>
-
-                        </ComboBox>
-
-                        <!-- ACTION BUTTONS -->
-
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Right">
-
-                            <Button Content="Add"
-                                    x:Name="btnAdd"
-                                    Width="100"
-                                    Height="36"
-                                    Margin="0,0,8,0"
-                                    Background="#F9D678"
-                                    FontWeight="SemiBold"
-                                    Click="btnAdd_Click"/>
-
-                            <Button Content="Update"
-                                    x:Name="btnUpdate"
-                                    Width="100"
-                                    Height="36"
-                                    Background="#3B82F6"
-                                    Foreground="White"
-                                    FontWeight="SemiBold"
-                                    Click="btnUpdate_Click"/>
-
-                        </StackPanel>
-
-                    </StackPanel>
-
-                </ScrollViewer>
 
             </Border>
 
