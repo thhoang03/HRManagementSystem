@@ -85,7 +85,7 @@
 
         <StackPanel Grid.Row="1" Margin="6,10">
             <Button x:Name="btnHRDashboard"
-                    Content="HR Dashboard"
+                    Content="Employees"
                     Style="{StaticResource SidebarButtonStyle}"
                     Click="btnHRDashboard_Click"/>
             <Button x:Name="btnContracts"
