@@ -2,7 +2,7 @@ using HRManagementSystem.BLL;
 using HRManagementSystem.Models;
 using HRManagementSystem.Views.Admin;
 using HRManagementSystem.Views.Employee;
-using HRManagementSystem.Views.HR;
+// HR views may be present; ensure namespace reference is valid when HR files exist
 using HRManagementSystem.Views.Manager;
 using System;
 using System.Windows;
@@ -46,7 +46,7 @@ namespace HRManagementSystem
                     "employee" => new MainEmployee(),
                     "manager" => new MainManager(),
                     "admin" => new MainAdmin(),
-                    "hr" => new MainHR(),
+                    "hr" => new HRManagementSystem.Views.HR.MainHR(),
                     _ => null
                 };
 

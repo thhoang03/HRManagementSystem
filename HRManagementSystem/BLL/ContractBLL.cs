@@ -23,12 +23,14 @@ namespace HRManagementSystem.BLL
                 return _contDAL.GetAll().ToList();
             }
 
+            string k = keyword.Trim();
             return _contDAL.GetAll()
                 .Where(c =>
-                    (c.Employee != null && c.Employee.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase))
-                    || (!string.IsNullOrEmpty(c.ContractType) && c.ContractType.Contains(keyword, StringComparison.OrdinalIgnoreCase))
-                    || (!string.IsNullOrEmpty(c.Status) && c.Status.Contains(keyword, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
+                    // search by employee name, contract type (full-time/part-time) or status
+                    (c.Employee != null && !string.IsNullOrWhiteSpace(c.Employee.FullName) && c.Employee.FullName.Contains(k, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(c.ContractType) && c.ContractType.Contains(k, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrEmpty(c.Status) && c.Status.Contains(k, StringComparison.OrdinalIgnoreCase))
+                ).ToList();
         }
     }
 }

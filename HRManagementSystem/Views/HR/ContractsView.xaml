@@ -1,0 +1,81 @@
+<Page x:Class="HRManagementSystem.Views.HR.ContractsView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d"
+      d:DesignHeight="600" d:DesignWidth="1000"
+      Title="Contracts" Loaded="ContractsView_Loaded" Background="#F8FAFC">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Contracts Management" Grid.Row="0" FontSize="24" FontWeight="Bold" Foreground="#0F172A"/>
+
+        <StackPanel Grid.Row="1" Margin="0,16,0,16" Orientation="Horizontal">
+            <Button x:Name="btnRefreshHeader" Content="Refresh" Width="100" Height="36" Margin="0,0,8,0" Background="#F9D678" FontWeight="SemiBold" Click="btnRefresh_Click"/>
+            <TextBox x:Name="txtSearch" Width="220" Height="36" Padding="8" Margin="0,0,8,0" VerticalContentAlignment="Center" TextChanged="txtSearch_TextChanged"/>
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="White" CornerRadius="12" Padding="16" Margin="0,0,16,0">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" Opacity="0.15"/>
+                </Border.Effect>
+
+                <DataGrid x:Name="dgContracts" AutoGenerateColumns="False" IsReadOnly="True" RowHeight="34" HeadersVisibility="Column" GridLinesVisibility="None" SelectionChanged="dgContracts_SelectionChanged">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="ID" Binding="{Binding ContractId}" Width="90" />
+                        <DataGridTextColumn Header="Employee" Binding="{Binding Employee.FullName}" Width="2*" />
+                        <DataGridTextColumn Header="Type" Binding="{Binding ContractType}" Width="1*" />
+                        <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate}" Width="1*" />
+                        <DataGridTextColumn Header="End Date" Binding="{Binding EndDate}" Width="1*" />
+                        <DataGridTextColumn Header="Salary" Binding="{Binding ContractSalary}" Width="1*" />
+                        <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="1*" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+
+            <Border Grid.Column="1" Background="White" CornerRadius="12" Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="12" Opacity="0.15"/>
+                </Border.Effect>
+
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Contract Detail" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Employee"/>
+                        <ComboBox x:Name="cbEmployees" Margin="0,6,0,12" DisplayMemberPath="FullName" SelectedValuePath="EmployeeId" SelectionChanged="cbEmployees_SelectionChanged"/>
+
+                        <TextBlock Text="Contract Type"/>
+                        <TextBox x:Name="txtContractType" Height="34" Padding="8" Margin="0,6,0,12"/>
+
+                        <TextBlock Text="Start Date"/>
+                        <DatePicker x:Name="dpStartDate" Margin="0,6,0,12"/>
+
+                        <TextBlock Text="End Date"/>
+                        <DatePicker x:Name="dpEndDate" Margin="0,6,0,12"/>
+
+                        <TextBlock Text="Contract Salary"/>
+                        <TextBox x:Name="txtSalary" Height="34" Padding="8" Margin="0,6,0,12"/>
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Content="Add" x:Name="btnAdd" Width="100" Height="36" Margin="0,0,8,0" Background="#F9D678" FontWeight="SemiBold" Click="btnAdd_Click"/>
+                            <Button Content="Delete" x:Name="btnDeleteDetail" Width="100" Height="36" Background="#EF4444" Foreground="White" Click="btnDeleteContract_Click"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>
